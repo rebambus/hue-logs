@@ -1,0 +1,9 @@
+RewriteEngine On
+
+RewriteCond %{SCRIPT_FILENAME} !-d
+RewriteCond %{SCRIPT_FILENAME} !-f
+
+RewriteRule ^/sensors/(\d+)$ ./sensors.php?id=$1
+RewriteRule ^/lights/(\d+)$ ./lights.php?id=$1
+
+php_flag p display_errors 1
