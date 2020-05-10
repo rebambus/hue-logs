@@ -46,7 +46,7 @@ LIMIT 10;
         <?php
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-        		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
+                echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
                 echo '<td><script>document.write(moment.unix("'. $row['start_time']. '").fromNow());</script></td>'; // time ago
                 echo '<td><script>document.write(moment.unix("'. $row['end_time']. '").from(moment.unix("'. $row['start_time']. '"),true));</script></td>'; // duration
                 echo '<td>'. $row['state']. '</td>';
