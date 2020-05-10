@@ -20,7 +20,7 @@ SELECT sensor.sensor_id,
   ORDER BY log.lastupdated DESC
   LIMIT 10;
   ";
-  
+
       $result = $conn->query($sql);
       $row = $result->fetch_assoc();
       $result->data_seek(0); // Just tickle the first row, then rewind.
@@ -63,7 +63,7 @@ SELECT sensor.sensor_id,
     </table>
 </div>
 
-    
+
 <?php
 } // end of if (isset($_GET['id']))
 else {
@@ -93,7 +93,7 @@ ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN '
 
 $result = $conn->query($sql);
 ?>
-    
+
 <div class="table-responsive">
     <table id="sensor-table" class="table table-striped table-sm">
         <thead>
@@ -130,28 +130,28 @@ $result = $conn->query($sql);
 		var data = google.visualization.arrayToDataTable([
 			<?php
                 require_once('mysqli_connect.php');
-                
+
                 $sql = "
                 SELECT CONCAT('[',
-                	'new Date(''', lastupdated, '''),',
+                	'new Date(', 1000*UNIX_TIMESTAMP(lastupdated), '),',
                 	IFNULL(CASE WHEN type = 'lightlevel' THEN 100*CAST(value AS UNSIGNED)/30000 ELSE value END,'null'), ',',
                   '],') chart_row -- list with 2 elements
                 FROM hue_sensor_data log
                 WHERE log.sensor_id = ". $_GET['id']. "
                 	AND log.lastupdated > TIMESTAMPADD(HOUR,-@hours_back,UTC_TIMESTAMP())
-                ORDER BY log.lastupdated DESC
+                ORDER BY log.id DESC
                 LIMIT 10000;
                 ";
-                
+
                 if (!isset($_GET['hours_back'])) {
                 	$hours_back = 24;
                 } else {
                 	$hours_back = $_GET['hours_back'];
                 }
                 $sql = str_replace("@hours_back", $hours_back, $sql);
-                
+
                 $result = $conn->query($sql);
-                
+
                 if ($result->num_rows > 0) {
                     echo "['Time','Value'],";
                     while ($row = $result->fetch_assoc()) {
