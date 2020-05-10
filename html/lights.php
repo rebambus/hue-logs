@@ -122,10 +122,10 @@ require_once('mysqli_connect.php');
 
 $sql = "
 SELECT CONCAT('[',
-	'new Date(''', 1000*UNIX_TIMESTAMP(end_time), '''),',
+	'new Date(', 1000*UNIX_TIMESTAMP(end_time), '),',
 	IFNULL(CASE WHEN state = 1 THEN brightness ELSE 0 END,'null'), ',',
 	'],[',
-	'new Date(''', 1000*UNIX_TIMESTAMP(CASE WHEN TIMESTAMPADD(HOUR,-@hours_back,UTC_TIMESTAMP()) > start_time THEN TIMESTAMPADD(HOUR,-@hours_back,UTC_TIMESTAMP()) ELSE start_time END), '''),',
+	'new Date(', 1000*UNIX_TIMESTAMP(CASE WHEN TIMESTAMPADD(HOUR,-@hours_back,UTC_TIMESTAMP()) > start_time THEN TIMESTAMPADD(HOUR,-@hours_back,UTC_TIMESTAMP()) ELSE start_time END), '),',
 	IFNULL(CASE WHEN state = 1 THEN brightness ELSE 0 END,'null'), ',',
 	'],') chart_row -- list with 2 elements (2 records, start and end)
 FROM light_history lh
