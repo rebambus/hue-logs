@@ -58,8 +58,8 @@ if ($result->num_rows > 0) {
 
         $temp[] = array('v' => $row['row_label']);
         $temp[] = array('v' => $row['bar_label']);
-        $temp[] = array('v' => $row['start_time']);
-        $temp[] = array('v' => $row['end_time']);
+        $temp[] = array('v' => 'Date(' . 1000 * $row['start_time'] . ')');
+        $temp[] = array('v' => 'Date(' . 1000 * $row['end_time'] . ')');
 
         $rows[] = array('c' => $temp);
     }
