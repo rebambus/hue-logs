@@ -88,19 +88,19 @@ ORDER BY COALESCE(state,-1) DESC, log.start_time DESC, description;
             <tr>
                 <th>Light</th>
                 <th>State</th>
+                <th>Last Change</th>
                 <th>Time Ago</th>
-                <th>Time</th>
             </tr>
         </thead>
         <tbody>
             <?php
         	while ($row = $result->fetch_assoc()) {
-        		echo '<tr>';
-        		echo '<td><a href="index.php?page=lights&id=' . $row['light_id'] . '">'. $row['description'] . '</a></td>';
-        		echo '<td>'. $row['state']. '</td>';
-            	echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
-        		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").calendar());</script></span></td>';
-        		echo '</tr>';
+		echo '<tr>';
+		echo '<td><a href="index.php?page=lights&id=' . $row['light_id'] . '">'. $row['description'] . '</a></td>';
+		echo '<td>'. $row['state']. '</td>';
+		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").calendar());</script></span></td>';
+		echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
+		echo '</tr>';
         	}
             ?>
         </tbody>

@@ -99,9 +99,10 @@ $result = $conn->query($sql);
         <thead>
             <tr>
                 <th>Sensor</th>
+                <th>Value</th>
                 <th>Type</th>
                 <th>Last Update</th>
-                <th>Last Value</th>
+                <th>Time Ago</th>
             </tr>
         </thead>
         <tbody>
@@ -109,9 +110,10 @@ $result = $conn->query($sql);
             while ($row = $result->fetch_assoc()) {
             	echo '<tr>';
             	echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
-            	echo '<td>'. $row['type']. '</td>';
-            	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
             	echo '<td>'. $row['value']. '</td>';
+            	echo '<td>'. $row['type']. '</td>';
+            	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
+	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
             	echo '</tr>';
             }
             ?>
