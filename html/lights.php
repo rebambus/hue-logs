@@ -83,7 +83,7 @@ LEFT JOIN	(
 	FROM	light_history AS log
 	WHERE	end_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP())
 		AND state = 1
-GROUP BY	light_id) time_on ON time_on.light_id = lights.light_id
+GROUP BY	light_id) time_on ON time_on.light_id = lights.id
 WHERE	log.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)
 ORDER BY	COALESCE(state,-1) DESC, log.start_time DESC, description;
 ";
