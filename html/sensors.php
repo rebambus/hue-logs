@@ -80,15 +80,15 @@ SELECT sensor.sensor_id,
 	CASE
 		WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
 		WHEN log.type = 'temperature' THEN CONCAT(ROUND(value,1), ' °F')
-		WHEN log.type = 'motion' AND log.value = '1' THEN 'Activity'
-		WHEN log.type = 'motion' AND log.value = '0' THEN 'No activity'
+		WHEN log.type = 'motion' AND log.value = 1 THEN 'Activity'
+		WHEN log.type = 'motion' AND log.value = 0 THEN 'No activity'
 		ELSE log.value
 		END AS value,
 	CASE
-		WHEN log.type = 'motion' AND log.value = '1' THEN '<span data-feather=''users''></span>'
+		WHEN log.type = 'motion' AND log.value = 1 THEN '<span data-feather=''users''></span>'
 		WHEN log.type = 'lightlevel' AND log.value > 10000 THEN '<span data-feather=''sun''></span>'
 		WHEN log.type = 'lightlevel' AND log.value = 0 THEN '<span data-feather=''moon''></span>'
-		WHEN log.type = 'temperature' AND log.value < 40 THEN '<span data-feather=''trending-down''></span>'
+		WHEN log.type = 'temperature' AND log.value < 100 THEN '<span data-feather=''trending-down''></span>'
 		WHEN log.type = 'temperature' AND log.value > 75 THEN '<span data-feather=''trending-up''></span>'
 		ELSE ''
 		END AS feather
