@@ -108,8 +108,6 @@ ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 			<tr>
 				<th>Light</th>
 				<th>State</th>
-				<th>Last Change</th>
-				<th></th>
 				<th>Last On</th>
 				<th></th>
 				<th>... for</th>
@@ -122,8 +120,6 @@ ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 				echo '<tr>';
 				echo '<td><a href="index.php?page=lights&id=' . $row['light_id'] . '">'. $row['description'] . '</a></td>';
 				echo '<td>'. $row['state']. '</td>';
-				echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix('. $row['start_time']. ').calendar());</script></span></td>';
-				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
 				echo '<td><span title="'. $row['last_on']. '"><script>document.write(moment.unix('. $row['last_on']. ').calendar());</script></span></td>';
 				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['last_on']. '"></span></td>';
 				echo '<td><script>document.write(moment.duration('. $row['last_on_seconds_on']. ',"seconds").humanize());</script></td>';
