@@ -5,24 +5,40 @@ $sql = "
 SELECT	sensor.sensor_id,
 	sensor.description sensor,
 	ROUND(log.value,1) temperature,
-	UNIX_TIMESTAMP(log.lastupdated) lastupdated,
+	UNIX_TIMESTAMP(log.lastupdated) time,
+	ROUND(log_min.value,1) AS min_temp,
+	UNIX_TIMESTAMP(log_min.lastupdated) min_time,
+	ROUND(log_max.value,1) AS max_temp,
+	UNIX_TIMESTAMP(log_max.lastupdated) max_time
+	/*
 	ROUND(min24,1) min24,
 	ROUND(max24,1) max24,
 	ROUND(max24-min24,1) delta24
+	*/
 FROM	hue_sensor_data log
 JOIN	hue_sensors sensor ON sensor.sensor_id = log.sensor_id
-LEFT JOIN	(SELECT
-		sensor_id,
-		MIN(value) min24,
-		MAX(value) max24
-	FROM hue_sensor_data
-	WHERE type = 'temperature'
+LEFT JOIN	hue_sensor_data log_min ON log_min.id
+	=
+	(SELECT id
+	FROM hue_sensor_data h2
+	WHERE h2.sensor_id = log.sensor_id
 		AND lastupdated >= timestampadd(day,-1,UTC_TIMESTAMP())
-	GROUP BY sensor_id
-	) min_max ON min_max.sensor_id = log.sensor_id
-WHERE	id IN (SELECT MAX(id) FROM hue_sensor_data GROUP BY sensor_id)
-	AND type = 'temperature'
-ORDER BY	CASE WHEN description LIKE '%porch%' THEN 1 ELSE 2 END;";
+	ORDER BY value, id DESC
+	LIMIT 1
+	)
+LEFT JOIN	hue_sensor_data log_max ON log_max.id
+	=
+	(SELECT id
+	FROM hue_sensor_data h2
+	WHERE h2.sensor_id = log.sensor_id
+		AND lastupdated >= timestampadd(day,-1,UTC_TIMESTAMP())
+	ORDER BY value DESC, id DESC
+	LIMIT 1
+	)
+WHERE	log.type = 'temperature'
+	AND log.id IN (SELECT MAX(id) FROM hue_sensor_data GROUP BY sensor_id)
+ORDER BY	CASE WHEN description LIKE '%porch%' THEN 1 ELSE 2 END, sensor.description;
+";
 
 $result = $conn->query($sql);
 
@@ -36,8 +52,9 @@ if ($result->num_rows > 0) {
 				echo "<th>Time</th>";
 				echo "<th>Time Ago</th>";
 				echo "<th>24 hr min</th>";
+				echo "<th></th>";
 				echo "<th>24 hr max</th>";
-				echo "<th>24 hr Δ</th>";
+				echo "<th></th>";
 			echo "</tr>";
 		echo "</thead>";
 		echo "<tbody>";
@@ -46,11 +63,12 @@ if ($result->num_rows > 0) {
 				"<td>" . '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">'. $row['description'] .
 					$row["sensor"] .  '</a>' . "</td>" .
 				"<td>" . $row["temperature"] . "</td>" .
-				'<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>' .
-				"<td>" . $row["min24"] . "</td>" .
-				"<td>" . $row["max24"] . "</td>" .
-				"<td>" . $row["delta24"] . "</td>" .
+				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>' .
+				'<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>' .
+				"<td>" . $row["min_temp"] . "</td>" .
+				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>' .
+				"<td>" . $row["max_temp"] . "</td>" .
+				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>' .
 				"</tr>";
 			}
 		echo "</tbody>";
