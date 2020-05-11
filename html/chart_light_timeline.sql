@@ -6,8 +6,8 @@ CASE state WHEN 1 THEN 'On'
 		WHEN brightness >= 0 THEN 'Dim'
 		ELSE 'Off' END*/
   WHEN 0 THEN 'Off' ELSE 'Unavailable' END bar_label,
-  1000*UNIX_TIMESTAMP(CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END) start_time,
-  1000*UNIX_TIMESTAMP(end_time) end_time
+  UNIX_TIMESTAMP(CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END) start_time,
+  UNIX_TIMESTAMP(end_time) end_time
   /*
   CONCAT('new Date(', 1000*UNIX_TIMESTAMP(CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END), ')') AS start_time,
   CONCAT('new Date(', 1000*UNIX_TIMESTAMP(end_time), ')') AS end_time
