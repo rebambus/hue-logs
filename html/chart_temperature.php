@@ -68,7 +68,7 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $temp = array();
 
-        $temp[] = array('v' => $row['lastupdated']);
+        $temp[] = array('v' => 'Date(' . $row['lastupdated'] .')');
         $temp[] = array('v' => $row['basement']);
         $temp[] = array('v' => $row['upstairs_hallway']);
         $temp[] = array('v' => $row['bathroom']);
