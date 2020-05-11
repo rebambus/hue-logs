@@ -1,5 +1,5 @@
 SELECT
-	json_date(CONVERT_TZ(lastupdated,'+00:00',@@global.time_zone)) lastupdated,
+		UNIX_TIMESTAMP(lastupdated) AS lastupdated,
 		ROUND(basement,2) basement,
 		ROUND(upstairs_hallway,2) upstairs_hallway,
 		ROUND(bathroom,2) bathroom,
