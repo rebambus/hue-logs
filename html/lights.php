@@ -65,18 +65,28 @@ else {
 
 // list of all lights
 $sql = "
-SELECT  log.light_id,
-        lights.description,
-        UNIX_TIMESTAMP(log.start_time) start_time,
-        UNIX_TIMESTAMP(log.end_time) end_time,
-        CASE WHEN state IS NULL THEN ''
-          WHEN state = 0 THEN 'Off'
-          WHEN state = 1 AND brightness = 0 THEN 'On'
-          WHEN state = 1 THEN CONCAT(ROUND(100.*brightness/254.,0),' %') ELSE 'Unknown' END state
-FROM light_history log
-JOIN lights lights ON lights.id = log.light_id
-WHERE log.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)
-ORDER BY COALESCE(state,-1) DESC, log.start_time DESC, description;
+SELECT	log.light_id,
+	lights.description,
+	UNIX_TIMESTAMP(log.start_time) start_time,
+	UNIX_TIMESTAMP(log.end_time) end_time,
+	CASE WHEN state IS NULL THEN ''
+		WHEN state = 0 THEN 'Off'
+		WHEN state = 1 AND brightness = 0 THEN 'On'
+		WHEN state = 1 THEN CONCAT(ROUND(100.*brightness/254.,0),' %') ELSE 'Unknown' END state,
+	time_on.seconds_on
+FROM	light_history log
+JOIN	lights lights ON lights.id = log.light_id
+LEFT JOIN	(
+	SELECT	light_id,
+		SUM(TIMESTAMPDIFF(SECOND,CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time
+			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END,end_time)) seconds_on
+	FROM	light_history AS log
+	WHERE	end_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP())
+		AND state = 1
+	) time_on ON time_on.light_id = lights.light_id
+GROUP BY	light_id)
+WHERE	log.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)
+ORDER BY	COALESCE(state,-1) DESC, log.start_time DESC, description;
 ";
 
 	$result = $conn->query($sql);
@@ -90,6 +100,7 @@ ORDER BY COALESCE(state,-1) DESC, log.start_time DESC, description;
                 <th>State</th>
                 <th>Last Change</th>
                 <th>Time Ago</th>
+                <th>Time On Last 24</th>
             </tr>
         </thead>
         <tbody>
@@ -100,6 +111,7 @@ ORDER BY COALESCE(state,-1) DESC, log.start_time DESC, description;
 		echo '<td>'. $row['state']. '</td>';
 		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").calendar());</script></span></td>';
 		echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
+		echo '<td>'. $row['seconds_on']. '</td>';
 		echo '</tr>';
         	}
             ?>
