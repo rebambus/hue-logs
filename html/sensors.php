@@ -88,7 +88,7 @@ SELECT sensor.sensor_id,
 		WHEN log.type = 'motion' AND log.value = 1 THEN '<span data-feather=''users''></span>'
 		WHEN log.type = 'lightlevel' AND log.value > 10000 THEN '<span data-feather=''sun''></span>'
 		WHEN log.type = 'lightlevel' AND log.value = 0 THEN '<span data-feather=''moon''></span>'
-		WHEN log.type = 'temperature' AND log.value < 100 THEN '<span data-feather=''trending-down''></span>'
+		WHEN log.type = 'temperature' AND log.value < 40 THEN '<span data-feather=''trending-down''></span>'
 		WHEN log.type = 'temperature' AND log.value > 75 THEN '<span data-feather=''trending-up''></span>'
 		ELSE ''
 		END AS feather
