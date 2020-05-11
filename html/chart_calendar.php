@@ -54,7 +54,7 @@ function temp_chart_data($value)
         while ($row = $result->fetch_assoc()) {
             $temp = array();
 
-            $temp[] = array('v' => $row['calendar_date']);
+            $temp[] = array('v' => 'Date(' . 1000* $row['calendar_date'] . ')');
             if ($value = 'max') {
                 $temp[] = array('v' => $row['max_outside']);
             } elseif ($value = 'min') {
