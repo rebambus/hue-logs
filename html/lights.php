@@ -110,7 +110,7 @@ ORDER BY	COALESCE(state,-1) DESC, log.start_time DESC, description;
 		echo '<td>'. $row['state']. '</td>';
 		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix('. $row['start_time']. ').calendar());</script></span></td>';
 		echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
-		echo '<td><script>document.write(moment.duration('. $row['seconds_on']. ',\'seconds\'));</script></td>';
+		echo '<td><script>document.write(moment.duration('. $row['seconds_on']. ',"seconds").humanize());</script></td>';
 		echo '</tr>';
         	}
             ?>
