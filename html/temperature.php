@@ -10,7 +10,8 @@
 </p>
 <?php include 'temperature_html_table.php';?>
 
-<div class="my-4 w-100" id="chart_div" width="900" height="900"></div>
+// <div class="my-4 w-100" id="chart_div" width="900" height="900"></div>
+<div id="chart_div" style="width: 100%; height: 400px;"></div>
 
 <p>Links to chart data in
 	<a href="chart_temperature.php?<?php echo http_build_query(array_merge($_GET, array("output"=>null)))?>">JSON</a>,
