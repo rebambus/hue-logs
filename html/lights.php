@@ -96,7 +96,7 @@ LEFT JOIN	(
 		AND state = 1
 	) last_on ON last_on.light_id = lights.id
 WHERE	log.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)
-ORDER BY	last_on.last_on DESC, description;
+ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 ";
 
 	$result = $conn->query($sql);
