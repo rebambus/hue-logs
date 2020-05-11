@@ -53,7 +53,9 @@ if ($result->num_rows > 0) {
 				echo "<th>Time Ago</th>";
 				echo "<th>24 hr min</th>";
 				echo "<th></th>";
+				echo "<th></th>";
 				echo "<th>24 hr max</th>";
+				echo "<th></th>";
 				echo "<th></th>";
 			echo "</tr>";
 		echo "</thead>";
@@ -66,9 +68,11 @@ if ($result->num_rows > 0) {
 				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>' .
 				'<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>' .
 				"<td>" . $row["min_temp"] . "</td>" .
-				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>' .
+				'<td><span title="'. $row['min_time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>' .
+				'<td><span title="'. $row['min_time']. '" data-livestamp="'. $row['min_time']. '"></span></td>' .
 				"<td>" . $row["max_temp"] . "</td>" .
-				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>' .
+				'<td><span title="'. $row['max_time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>' .
+				'<td><span title="'. $row['max_time']. '" data-livestamp="'. $row['max_time']. '"></span></td>' .
 				"</tr>";
 			}
 		echo "</tbody>";
