@@ -87,7 +87,7 @@ FROM (SELECT sensor_id, MAX(lastupdated) lastupdated FROM hue_sensor_data GROUP 
 JOIN hue_sensor_data log ON log.sensor_id = last_update.sensor_id AND log.lastupdated = last_update.lastupdated
 JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
 WHERE log.lastupdated IS NOT NULL
-ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
+ORDER BY sensor.description, CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
 ";
 
 $result = $conn->query($sql);
