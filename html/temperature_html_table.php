@@ -6,16 +6,15 @@ SELECT	sensor.sensor_id,
 	sensor.description sensor,
 	ROUND(log.value,1) temperature,
 	UNIX_TIMESTAMP(log.lastupdated) lastupdated,
-	min24,
-	max24,
-	delta24
+	ROUND(min24,1) min24,
+	ROUND(max24,1) max24,
+	ROUND(max24-min24,1) delta24
 FROM	hue_sensor_data log
 JOIN	hue_sensors sensor ON sensor.sensor_id = log.sensor_id
 LEFT JOIN	(SELECT
 		sensor_id,
-		ROUND(MIN(value),1) min24,
-		ROUND(MAX(value),1) max24,
-		ROUND(MAX(value) - MIN(value),1) delta24
+		MIN(value) min24,
+		MAX(value) max24
 	FROM hue_sensor_data
 	WHERE type = 'temperature'
 		AND lastupdated >= timestampadd(day,-1,UTC_TIMESTAMP())
@@ -23,8 +22,7 @@ LEFT JOIN	(SELECT
 	) min_max ON min_max.sensor_id = log.sensor_id
 WHERE	id IN (SELECT MAX(id) FROM hue_sensor_data GROUP BY sensor_id)
 	AND type = 'temperature'
-ORDER BY	CASE WHEN description LIKE '%porch%' THEN 1 ELSE 2 END;
-";
+ORDER BY	CASE WHEN description LIKE '%porch%' THEN 1 ELSE 2 END;";
 
 $result = $conn->query($sql);
 
