@@ -46,7 +46,7 @@ LIMIT 10;
         <?php
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td><span title="<script>document.write(moment.unix("'. $row['start_time']. '").format());</script>"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
+                echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
                 echo '<td><script>document.write(moment.unix("'. $row['start_time']. '").fromNow());</script></td>';
                 echo '<td><script>document.write(moment.unix("'. $row['end_time']. '").from(moment.unix("'. $row['start_time']. '"),true));</script></td>';
                 echo '<td>'. $row['state']. '</td>';
@@ -98,8 +98,8 @@ ORDER BY COALESCE(state,-1) DESC, log.start_time DESC, description;
 		echo '<tr>';
 		echo '<td><a href="index.php?page=lights&id=' . $row['light_id'] . '">'. $row['description'] . '</a></td>';
 		echo '<td>'. $row['state']. '</td>';
-		echo '<td><span title="<script>document.write(moment.unix("'. $row['start_time']. '").format());</script>"><script>document.write(moment.unix("'. $row['start_time']. '").calendar());</script></span></td>';
-		echo '<td><span title="<script>document.write(moment.unix("'. $row['start_time']. '").format());</script>" data-livestamp="'. $row['start_time']. '"></span></td>';
+		echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").calendar());</script></span></td>';
+		echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
 		echo '</tr>';
         	}
             ?>

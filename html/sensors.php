@@ -111,8 +111,8 @@ $result = $conn->query($sql);
             	echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
             	echo '<td>'. $row['value']. '</td>';
             	echo '<td>'. $row['type']. '</td>';
-            	echo '<td><span title="<script>document.write(moment.unix("'. $row['lastupdated']. '").format());</script>"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
-	echo '<td><span title="<script>document.write(moment.unix("'. $row['lastupdated']. '").format());</script>" data-livestamp="'. $row['lastupdated']. '"></span></td>';
+            	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
+	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
             	echo '</tr>';
             }
             ?>
