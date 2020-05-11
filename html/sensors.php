@@ -54,9 +54,8 @@ SELECT sensor.sensor_id,
             <?php
                 while ($row = $result->fetch_assoc()) {
                     echo '<tr>';
-                    echo '<td><span title="'. $row['lastupdated']. '">' . $row['lastupdated']. '</span></td>';
-                    echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
-                    echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").fromNow());</script></span></td>';
+                    echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").local().calendar());</script></span></td>';
+                    echo '<td><script>document.write(moment.unix("'. $row['lastupdated']. '").fromNow());</script></td>';
                     echo '<td>'. $row['value']. '</td>';
                     echo '</tr>';
                 }
