@@ -77,7 +77,8 @@ SELECT sensor.sensor_id,
 	sensor.description,
 	UNIX_TIMESTAMP(log.lastupdated) lastupdated,
 	log.type,
-	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
+	CASE
+		WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
 		WHEN log.type = 'temperature' THEN CONCAT(ROUND(value,1), ' °F')
 		WHEN log.type = 'motion' AND log.value = '1' THEN 'Activity'
 		WHEN log.type = 'motion' AND log.value = '0' THEN 'No activity'
@@ -85,6 +86,7 @@ SELECT sensor.sensor_id,
 		END AS value,
 	CASE
 		WHEN log.type = 'motion' AND log.value = '1' THEN '<span data-feather=''users''></span>'
+		WHEN log.type = 'lightlevel' AND log.value > 10000 THEN '<span data-feather=''sun''></span>'
 		ELSE ''
 		END AS feather
 FROM (SELECT sensor_id, MAX(lastupdated) lastupdated FROM hue_sensor_data GROUP BY sensor_id) last_update
