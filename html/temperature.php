@@ -1,3 +1,4 @@
+<script type="text/javascript" src="http://momentjs.com/downloads/moment.js"></script>
 <h1 class="bd-title">Temperature</h1>
 
 <p>View data for the last
