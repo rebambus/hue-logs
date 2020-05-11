@@ -5,6 +5,6 @@ SELECT
 FROM hue_sensor_data
 JOIN hue_sensors ON hue_sensors.sensor_id = hue_sensor_data.sensor_id
 WHERE type = 'temperature'
-  AND description IN ('Front Porch','Back Porch')
-GROUP BY CAST(CONVERT_TZ(lastupdated,'+00:00',@@global.time_zone) AS DATE)
-ORDER BY CAST(CONVERT_TZ(lastupdated,'+00:00',@@global.time_zone) AS DATE);
+  AND description IN ('Back Porch')
+GROUP BY UNIX_TIMESTAMP(CAST(CONVERT_TZ(lastupdated,'+00:00',@@global.time_zone) AS DATE))
+ORDER BY UNIX_TIMESTAMP(CAST(CONVERT_TZ(lastupdated,'+00:00',@@global.time_zone) AS DATE));
