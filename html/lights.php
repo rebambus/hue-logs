@@ -75,7 +75,8 @@ SELECT	log.light_id,
 		WHEN state = 1 THEN CONCAT(ROUND(100.*brightness/254.,0),' %') ELSE 'Unknown' END state,
 	time_on.seconds_on AS seconds_on_last24,
 	UNIX_TIMESTAMP(last_on.last_on) last_on,
-	last_on.seconds_on last_on_seconds_on
+	last_on.seconds_on last_on_seconds_on,
+	CASE WHEN state = 1 THEN '<span data-feather=''sun''>' ELSE '' END feather
 FROM	light_history log
 JOIN	lights lights ON lights.id = log.light_id
 LEFT JOIN	(
@@ -119,7 +120,7 @@ ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 			while ($row = $result->fetch_assoc()) {
 				echo '<tr>';
 				echo '<td><a href="index.php?page=lights&id=' . $row['light_id'] . '">'. $row['description'] . '</a></td>';
-				echo '<td>'. $row['state']. '</td>';
+				echo '<td>'. $row['feather']. '</span>'. $row['state']. '</td>';
 				echo '<td><span title="'. $row['last_on']. '"><script>document.write(moment.unix('. $row['last_on']. ').calendar());</script></span></td>';
 				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['last_on']. '"></span></td>';
 				echo '<td><script>document.write(moment.duration('. $row['last_on_seconds_on']. ',"seconds").humanize());</script></td>';
