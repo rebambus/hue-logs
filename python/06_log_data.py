@@ -37,7 +37,7 @@ while True:
                     if value is not None:
                          value = 1.0*value/100*9/5 + 32 # C*100 to F
             elif 'presence' in jData[key]['state']:
-                    type = 'presence'
+                    type = 'motion'
                     value = jData[key]['state']['presence']
             elif 'lightlevel' in jData[key]['state']:
                     type = 'lightlevel'
