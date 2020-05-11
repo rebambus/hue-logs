@@ -1,3 +1,4 @@
+<script type="text/javascript" src="http://momentjs.com/downloads/moment.js"></script>
 <?php
 require_once('mysqli_connect.php');
 
