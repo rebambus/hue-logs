@@ -82,42 +82,48 @@ SELECT sensor.sensor_id,
 		WHEN log.type = 'motion' AND log.value = '1' THEN 'Activity'
 		WHEN log.type = 'motion' AND log.value = '0' THEN 'No activity'
 		ELSE log.value
-	END value
+		END AS value,
+	CASE
+		WHEN log.type = 'motion' AND log.value = '1' THEN '<span data-feather=''users''></span>'
+		ELSE ''
+		END AS feather
 FROM (SELECT sensor_id, MAX(lastupdated) lastupdated FROM hue_sensor_data GROUP BY sensor_id) last_update
 JOIN hue_sensor_data log ON log.sensor_id = last_update.sensor_id AND log.lastupdated = last_update.lastupdated
 JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
 WHERE log.lastupdated IS NOT NULL
-ORDER BY sensor.description, CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
+ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
 ";
 
 $result = $conn->query($sql);
 ?>
 
 <div class="table-responsive">
-    <table id="sensor-table" class="table table-striped table-sm">
-        <thead>
-            <tr>
-                <th>Sensor</th>
-                <th>Value</th>
-                <th>Type</th>
-                <th>Last Update</th>
-                <th>Time Ago</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            while ($row = $result->fetch_assoc()) {
-            	echo '<tr>';
-            	echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
-            	echo '<td>'. $row['value']. '</td>';
-            	echo '<td>'. $row['type']. '</td>';
-	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
-	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
-            	echo '</tr>';
-            }
-            ?>
-        </tbody>
-    </table>
+	<table id="sensor-table" class="table table-striped table-sm">
+		<thead>
+			<tr>
+				<th>Sensor</th>
+				<th>Icon</th>
+				<th>Value</th>
+				<th>Type</th>
+				<th>Last Update</th>
+				<th>Time Ago</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php
+			while ($row = $result->fetch_assoc()) {
+				echo '<tr>';
+					echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
+					echo '<td>'. $row['feather']. '</td>';
+					echo '<td>'. $row['value']. '</td>';
+					echo '<td>'. $row['type']. '</td>';
+					echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
+					echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
+				echo '</tr>';
+			}
+			?>
+		</tbody>
+	</table>
 </div>
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
