@@ -3,7 +3,7 @@
 require_once('mysqli_connect.php');
 
 if (isset($_GET['id'])) {
-// data for table of one light history
+// history for one light
 $sql = "
 SELECT  lh.light_id,
 	lights.description,
@@ -46,7 +46,7 @@ LIMIT 10;
         <?php
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
-                echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
+                echo '<td><span title="<script>document.write(moment.unix("'. $row['start_time']. '").format());</script>"><script>document.write(moment.unix("'. $row['start_time']. '").local().calendar());</script></span></td>';
                 echo '<td><script>document.write(moment.unix("'. $row['start_time']. '").fromNow());</script></td>'; // time ago
                 echo '<td><script>document.write(moment.unix("'. $row['end_time']. '").from(moment.unix("'. $row['start_time']. '"),true));</script></td>'; // duration
                 echo '<td>'. $row['state']. '</td>';
@@ -63,7 +63,7 @@ else {
     echo '<h1 class="h2">Lights</h1>';
 }
 
-// data for table of all lights
+// list of all lights
 $sql = "
 SELECT  log.light_id,
         lights.description,

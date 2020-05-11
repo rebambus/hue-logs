@@ -2,6 +2,7 @@
 require_once('mysqli_connect.php');
 
 if (isset($_GET['id'])) {
+// history for one sensor
   $sql = "
 SELECT sensor.sensor_id,
   	sensor.description,
@@ -70,6 +71,7 @@ else {
     echo '<h1 class="h2">Sensors</h1>';
 }
 
+// list of all sensors
 $sql = "
 SELECT sensor.sensor_id,
 	sensor.description,
@@ -81,10 +83,7 @@ SELECT sensor.sensor_id,
 		WHEN log.type = 'presence' AND log.value = '0' THEN 'No activity'
 		ELSE log.value
 	END value
-FROM (SELECT sensor_id,
-          MAX(lastupdated) lastupdated
-      FROM hue_sensor_data
-      GROUP BY sensor_id) last_update
+FROM (SELECT sensor_id, MAX(lastupdated) lastupdated FROM hue_sensor_data GROUP BY sensor_id) last_update
 JOIN hue_sensor_data log ON log.sensor_id = last_update.sensor_id AND log.lastupdated = last_update.lastupdated
 JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
 WHERE log.lastupdated IS NOT NULL
@@ -112,8 +111,8 @@ $result = $conn->query($sql);
             	echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
             	echo '<td>'. $row['value']. '</td>';
             	echo '<td>'. $row['type']. '</td>';
-            	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
-	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
+            	echo '<td><span title="<script>document.write(moment.unix("'. $row['lastupdated']. '").format());</script>"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
+	echo '<td><span title="<script>document.write(moment.unix("'. $row['lastupdated']. '").format());</script>" data-livestamp="'. $row['lastupdated']. '"></span></td>';
             	echo '</tr>';
             }
             ?>
