@@ -10,14 +10,14 @@ SELECT sensor.sensor_id,
   	log.type,
   	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
   		WHEN log.type = 'temperature' THEN CONCAT(ROUND(log.value,1), ' °F')
-  		WHEN log.type = 'presence' AND value = '1' THEN CONCAT('Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
-  		WHEN log.type = 'presence' AND value = '0' THEN CONCAT('No Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+  		WHEN log.type = 'motion' AND value = '1' THEN CONCAT('Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+  		WHEN log.type = 'motion' AND value = '0' THEN CONCAT('No Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
   		ELSE log.value
   	END value
   FROM hue_sensor_data log
   JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
   WHERE sensor.sensor_id = " . $_GET['id'] . "
-  	AND NOT (log.type = 'presence' AND log.value = '0')
+  	AND NOT (log.type = 'motion' AND log.value = '0')
   ORDER BY log.lastupdated DESC
   LIMIT 10;
   ";
@@ -79,15 +79,15 @@ SELECT sensor.sensor_id,
 	log.type,
 	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
 		WHEN log.type = 'temperature' THEN CONCAT(ROUND(value,1), ' °F')
-		WHEN log.type = 'presence' AND log.value = '1' THEN 'Activity'
-		WHEN log.type = 'presence' AND log.value = '0' THEN 'No activity'
+		WHEN log.type = 'motion' AND log.value = '1' THEN 'Activity'
+		WHEN log.type = 'motion' AND log.value = '0' THEN 'No activity'
 		ELSE log.value
 	END value
 FROM (SELECT sensor_id, MAX(lastupdated) lastupdated FROM hue_sensor_data GROUP BY sensor_id) last_update
 JOIN hue_sensor_data log ON log.sensor_id = last_update.sensor_id AND log.lastupdated = last_update.lastupdated
 JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
 WHERE log.lastupdated IS NOT NULL
-ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'presence' THEN 3 ELSE 4 END, log.lastupdated DESC;
+ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
 ";
 
 $result = $conn->query($sql);
@@ -111,7 +111,7 @@ $result = $conn->query($sql);
             	echo '<td><a href="index.php?' . http_build_query(array_merge($_GET, array("id"=>$row['sensor_id']))) . '">'. $row['description'] . '</a></td>';
             	echo '<td>'. $row['value']. '</td>';
             	echo '<td>'. $row['type']. '</td>';
-            	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
+	echo '<td><span title="'. $row['lastupdated']. '"><script>document.write(moment.unix("'. $row['lastupdated']. '").calendar());</script></span></td>';
 	echo '<td><span title="'. $row['lastupdated']. '" data-livestamp="'. $row['lastupdated']. '"></span></td>';
             	echo '</tr>';
             }

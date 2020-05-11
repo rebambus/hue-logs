@@ -9,18 +9,18 @@ if (isset($_GET['id'])) {
         	log.type,
         	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS INT)/30000,0),' %')
         		WHEN log.type = 'temperature' THEN CONCAT(ROUND(log.value,1), ' °F')
-        		WHEN log.type = 'presence' AND value = '1' THEN CONCAT('Activity for ',(SELECT MIN(next.lastupdated_local) FROM hue_sensor_data_local next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
-        		WHEN log.type = 'presence' AND value = '0' THEN CONCAT('No Activity for ',(SELECT MIN(next.lastupdated_local) FROM hue_sensor_data_local next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+        		WHEN log.type = 'motion' AND value = '1' THEN CONCAT('Activity for ',(SELECT MIN(next.lastupdated_local) FROM hue_sensor_data_local next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+        		WHEN log.type = 'motion' AND value = '0' THEN CONCAT('No Activity for ',(SELECT MIN(next.lastupdated_local) FROM hue_sensor_data_local next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
         		ELSE log.value
         	END value
         FROM hue_sensor_data_local log
         JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
         WHERE sensor.sensor_id = " . $_GET['id'] . "
-        	AND NOT (log.type = 'presence' AND log.value = '0')
+        	AND NOT (log.type = 'motion' AND log.value = '0')
         ORDER BY log.lastupdated DESC
         LIMIT 10;
         ";
-        
+
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             $result->data_seek(0); // Just tickle the first row, then rewind.
@@ -33,7 +33,7 @@ if (isset($_GET['id'])) {
         	<a href="index.php?<?php echo http_build_query(array_merge($_GET, array("hours_back"=>"168")))?>">week</a>, or
         	<a href="index.php?<?php echo http_build_query(array_merge($_GET, array("hours_back"=>"720")))?>">month</a>.
         </p>
-        
+
         <!--<div id="chart_div" class="img-fluid"></div> <!--style="width: 100%; height: 400px;"-->-->
     		<div id="chart-container">
     			<canvas id="mycanvas"></canvas>
@@ -62,13 +62,13 @@ if (isset($_GET['id'])) {
                 </tbody>
             </table>
         </div>
-        
+
         <?php
     } // end of if (isset($_GET['id']))
     else {
         echo '<h1 class="h2">Sensors</h1>';
     }
-    
+
     $sql = "
     SELECT sensor.sensor_id,
     	sensor.description,
@@ -76,8 +76,8 @@ if (isset($_GET['id'])) {
     	log.type,
     	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
     		WHEN log.type = 'temperature' THEN CONCAT(ROUND(value,1), ' °F')
-    		WHEN log.type = 'presence' AND log.value = '1' THEN 'Activity'
-    		WHEN log.type = 'presence' AND log.value = '0' THEN 'No activity'
+    		WHEN log.type = 'motion' AND log.value = '1' THEN 'Activity'
+    		WHEN log.type = 'motion' AND log.value = '0' THEN 'No activity'
     		ELSE log.value
     	END value
     FROM (SELECT sensor_id,
@@ -87,12 +87,12 @@ if (isset($_GET['id'])) {
     JOIN hue_sensor_data log ON log.sensor_id = last_update.sensor_id AND log.lastupdated = last_update.lastupdated
     JOIN hue_sensors sensor ON sensor.sensor_id = log.sensor_id
     WHERE log.lastupdated IS NOT NULL
-    ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'presence' THEN 3 ELSE 4 END, log.lastupdated DESC;
+    ORDER BY CASE log.type WHEN 'temperature' THEN 1 WHEN 'lightlevel' THEN 2 WHEN 'motion' THEN 3 ELSE 4 END, log.lastupdated DESC;
     ";
-    
+
     $result = $conn->query($sql);
     ?>
-    
+
 <div class="table-responsive">
     <table class="table table-striped table-sm">
         <thead>
