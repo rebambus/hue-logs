@@ -9,13 +9,13 @@
 	<a href="index.php?<?php echo http_build_query(array_merge($_GET, array("hours_back"=>"720")))?>">month</a>.
 </p>
 
+<div class="my-4 w-100" id="timeline" width="900" height="380"></canvas>
+
 <p>Links to chart data in
 	<a href="chart_lights.php?<?php echo http_build_query(array_merge($_GET, array("output"=>null)))?>">JSON</a>,
 	<a href="chart_lights.php?<?php echo http_build_query(array_merge($_GET, array("output"=>"sql")))?>">SQL</a>, or
 	<a href="chart_lights.php?<?php echo http_build_query(array_merge($_GET, array("output"=>"table")))?>">HTML table</a>.
 </p>
-
-<div class="my-4 w-100" id="timeline" width="900" height="380"></canvas>
 
 <?php include 'time_since_script.php'?>
 
