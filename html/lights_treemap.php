@@ -27,19 +27,21 @@ JOIN hue_lights ON hue_lights.light_id = hue_light_history.light_id;
 -- WHERE hue_light_history.state = 1
 ";*/
 
-$sql = "SELECT CONCAT('[''', description, ''',''All'',0,0],') chart_row
-FROM hue_lights
+$sql = "
+SELECT CONCAT('[''', description, ''',''All'',0,0],') chart_row
+FROM lights
 GROUP BY description
 UNION ALL
 SELECT CONCAT('[''', description, ' (', brightness, ')'',''', description, ''',' ,
     ROUND(SUM(TIMESTAMPDIFF(SECOND,start_time,end_time))/60./60.,2), ',' ,
     brightness,
     '],') chart_row
-FROM hue_light_history
-JOIN hue_lights ON hue_lights.light_id = hue_light_history.light_id
+FROM light_history log
+JOIN lights ON lights.id = log.light_id
 WHERE start_time > TIMESTAMPADD(DAY,-7,UTC_TIMESTAMP())
   AND state=1
-GROUP BY description, brightness;";
+GROUP BY description, brightness;
+";
 
 // $json_array = array();
 $result = $conn->query($sql);
