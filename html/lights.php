@@ -109,8 +109,9 @@ ORDER BY	COALESCE(state,-1) DESC, time_on.seconds_on DESC, log.start_time DESC, 
 				<th>Light</th>
 				<th>State</th>
 				<th>Last Change</th>
-				<th>Time Ago</th>
+				<th></th>
 				<th>Last On</th>
+				<th></th>
 				<th>... for</th>
 				<th>Time On Last 24</th>
 			</tr>
@@ -124,6 +125,7 @@ ORDER BY	COALESCE(state,-1) DESC, time_on.seconds_on DESC, log.start_time DESC, 
 				echo '<td><span title="'. $row['start_time']. '"><script>document.write(moment.unix('. $row['start_time']. ').calendar());</script></span></td>';
 				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['start_time']. '"></span></td>';
 				echo '<td><span title="'. $row['last_on']. '"><script>document.write(moment.unix('. $row['last_on']. ').calendar());</script></span></td>';
+				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['last_on']. '"></span></td>';
 				echo '<td><script>document.write(moment.duration('. $row['last_on_seconds_on']. ',"seconds").humanize());</script></td>';
 				echo '<td><script>document.write(moment.duration('. $row['seconds_on_last24']. ',"seconds").humanize());</script></td>';
 				echo '</tr>';
