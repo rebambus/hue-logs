@@ -14,11 +14,9 @@ function active($current_page){
 <nav class="col-md-2 bg-light sidebar">
 	<div class="sidebar-sticky">
 		<ul class="nav flex-column">
-			<li class="divider">Basic</li>
 			<li class="nav-item"><a class="nav-link <?php active('lights');?>" href="index.php?page=lights"><span data-feather="sun"></span>Lights</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('sensors');?>" href="index.php?page=sensors"><span data-feather="activity"></span>Sensors</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('timeline');?>" href="index.php?page=timeline"><span data-feather="clock"></span>Timeline</a></li>
-			<li class="divider">Advanced</li>
 			<!--
 			<li class="nav-item"><a class="nav-link <?php active('sensors2');?>" href="index.php?page=sensors2"><span data-feather="activity"></span>Sensors 2</a></li>
 			-->

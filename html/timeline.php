@@ -5,15 +5,43 @@
 require_once('mysqli_connect.php');
 
 $sql = "
-SELECT   t.sensor_id,
-         sensors.description,
-         CAST(value AS SIGNED) AS temperature,
-         UNIX_TIMESTAMP(MAX(lastupdated)) AS last_time
-FROM     hue_sensor_data AS t
-         JOIN hue_sensors AS sensors
-             ON sensors.sensor_id = t.sensor_id
-WHERE    type = 'temperature'
-GROUP BY sensor_id, CAST(value AS SIGNED);
+SELECT UNIX_TIMESTAMP(time) time, description
+FROM (
+SELECT   lastupdated AS time,
+         CONCAT(CASE WHEN value = 1
+                         THEN 'Motion detected'
+                     WHEN value = 0
+                         THEN 'No motion detected'
+                     ELSE 'Unknown?'
+                END,
+                ' in ',
+                sensor.description) AS description
+FROM     hue_sensor_data AS l
+         JOIN hue_sensors AS sensor
+             ON sensor.sensor_id = l.sensor_id
+WHERE    type = 'motion'
+UNION ALL
+SELECT   start_time AS time,
+         CONCAT(
+             light.description,
+             ' turned ',
+             CASE WHEN reachable = 0
+                      THEN 'unreachable'
+                  WHEN state = 1
+                      THEN 'on'
+                  WHEN state = 0
+                      THEN 'off'
+                  ELSE 'unknown?'
+             END,
+             ' for ',
+             '<script>document.write(moment.duration(',
+             TIMESTAMPDIFF(SECOND, start_time, end_time),
+             ',''seconds'').humanize());</script>') AS description
+FROM     light_history AS l
+         JOIN lights AS light
+             ON light.id = l.light_id) timeline
+ORDER BY time DESC
+LIMIT 100;
 ";
 
 $result = $conn->query($sql);
@@ -23,23 +51,16 @@ if ($result->num_rows > 0) {
 	echo '<table class="table table-striped table-sm">';
 		echo "<thead>";
 			echo "<tr>";
-				echo "<th>Sensor</th>";
-				echo "<th>Temp</th>";
-				echo "<th>Last Time</th>";
+				echo "<th>Time</th>";
 				echo "<th></th>";
 			echo "</tr>\n";
 		echo "</thead>";
 		echo "<tbody>";
 			while ($row = $result->fetch_assoc()) {
 				echo "<tr>";
-					echo "<td>";
-						echo '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">';
-							echo $row['description'];
-						echo'</a>';
-					echo"</td>";
-					echo "<td>" . $row["temperature"] . "</td>";
-					echo '<td><span title="'. $row['last_time']. '"><script>document.write(moment.unix("'. $row['last_time']. '").calendar());</script></span></td>';
-					echo '<td><span title="'. $row['last_time']. '" data-livestamp="'. $row['last_time']. '"></span></td>';
+					echo '<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>';
+					echo '<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>';
+					echo "<td>" . $row["description"] . "</td>";
 				echo "</tr>\n";
 			}
 		echo "</tbody>";
