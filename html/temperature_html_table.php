@@ -22,8 +22,7 @@ FROM     hue_sensor_data AS log
                                  LIMIT 1
              )
          LEFT JOIN hue_sensor_data log_max
-             ON log_max.id = (   SELECT   TOP(1)
-                                          id
+             ON log_max.id = (   SELECT   id
                                  FROM     hue_sensor_data AS h2
                                  WHERE    h2.sensor_id = log.sensor_id
                                      AND lastupdated >= timestampadd(DAY, -1, UTC_TIMESTAMP())
