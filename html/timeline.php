@@ -5,42 +5,49 @@
 require_once('mysqli_connect.php');
 
 $sql = "
-SELECT UNIX_TIMESTAMP(time) time, description
-FROM (
-SELECT   lastupdated AS time,
-         CONCAT(CASE WHEN value = 1
-                         THEN 'Motion detected'
-                     WHEN value = 0
-                         THEN 'No motion detected'
-                     ELSE 'Unknown?'
-                END,
-                ' in ',
-                sensor.description) AS description
-FROM     hue_sensor_data AS l
-         JOIN hue_sensors AS sensor
-             ON sensor.sensor_id = l.sensor_id
-WHERE    type = 'motion'
-UNION ALL
-SELECT   start_time AS time,
-         CONCAT(
-             light.description,
-             ' turned ',
-             CASE WHEN reachable = 0
-                      THEN 'unreachable'
-                  WHEN state = 1
-                      THEN 'on'
-                  WHEN state = 0
-                      THEN 'off'
-                  ELSE 'unknown?'
-             END,
-             ' for ',
-             '<script>document.write(moment.duration(',
-             TIMESTAMPDIFF(SECOND, start_time, end_time),
-             ',''seconds'').humanize());</script>') AS description
-FROM     light_history AS l
-         JOIN lights AS light
-             ON light.id = l.light_id) timeline
-ORDER BY time DESC
+SELECT   UNIX_TIMESTAMP(t.time) AS time, t.description, t.feather
+FROM     (   SELECT lastupdated AS time,
+                    CONCAT(CASE WHEN value = 1
+                                    THEN 'Motion detected'
+                                WHEN value = 0
+                                    THEN 'No motion detected'
+                                ELSE 'Unknown?'
+                           END,
+                           ' in ',
+                           sensor.description) AS description,
+                    CASE WHEN value = 1
+                             THEN '<span data-feather=''users''></span>'
+                         ELSE ''
+                    END AS feather
+             FROM   hue_sensor_data AS l
+                    JOIN hue_sensors AS sensor
+                        ON sensor.sensor_id = l.sensor_id
+             WHERE  type = 'motion'
+             UNION ALL
+             SELECT start_time AS time,
+                    CONCAT(
+                        light.description,
+                        ' turned ',
+                        CASE WHEN reachable = 0
+                                 THEN 'unreachable'
+                             WHEN state = 1
+                                 THEN 'on'
+                             WHEN state = 0
+                                 THEN 'off'
+                             ELSE 'unknown?'
+                        END,
+                        ' for ',
+                        '<script>document.write(moment.duration(',
+                        TIMESTAMPDIFF(SECOND, start_time, end_time),
+                        ',''seconds'').humanize());</script>') AS description,
+                    CASE WHEN STATE = 1
+                             THEN '<span data-feather=''sun''></span>'
+                         ELSE ''
+                    END feather
+             FROM   light_history AS l
+                    JOIN lights AS light
+                        ON light.id = l.light_id) t
+ORDER BY t.TIME DESC
 LIMIT 100;
 ";
 
@@ -53,6 +60,8 @@ if ($result->num_rows > 0) {
 			echo "<tr>";
 				echo "<th>Time</th>";
 				echo "<th></th>";
+				echo "<th></th>";
+				echo "<th></th>";
 			echo "</tr>\n";
 		echo "</thead>";
 		echo "<tbody>";
@@ -60,6 +69,7 @@ if ($result->num_rows > 0) {
 				echo "<tr>";
 					echo '<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>';
 					echo '<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>';
+					echo "<td>" . $row["feather"] . "</td>";
 					echo "<td>" . $row["description"] . "</td>";
 				echo "</tr>\n";
 			}
