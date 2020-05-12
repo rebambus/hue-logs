@@ -21,7 +21,7 @@ function active($current_page){
 			-->
 			<li class="nav-item"><a class="nav-link <?php active('light_timeline');?>" href="index.php?page=light_timeline"><span data-feather="clock"></span>Light Timeline</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('temperature');?>" href="index.php?page=temperature"><span data-feather="thermometer"></span>Temperature</a></li>
-			<li class="nav-item"><a class="nav-link <?php active('temp_first_time_since');?>" href="index.php?page=temp_first_time_since"><span data-feather="thermometer"></span>Temperature</a></li>
+			<li class="nav-item"><a class="nav-link <?php active('temp_first_time_since');?>" href="index.php?page=temp_first_time_since"><span data-feather="thermometer"></span>Temp: Last Time</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('lightlevel');?>" href="index.php?page=lightlevel"><span data-feather="sun"></span>Light Level</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('presence');?>" href="index.php?page=presence"><span data-feather="users"></span>Motion</a></li>
 			<li class="nav-item"><a class="nav-link <?php active('calendar');?>" href="index.php?page=calendar"><span data-feather="calendar"></span>Temperature Calendar</a></li>

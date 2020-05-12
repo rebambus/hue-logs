@@ -9,9 +9,7 @@ SELECT   t.sensor_id
          sensors.description,
          t.temp,
          t.num_records,
-         IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above) AS last_time,
-         TIMESTAMPDIFF(DAY,  IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above), UTC_TIMESTAMP()) days_since,
-         TIMESTAMPDIFF(HOUR, IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above), UTC_TIMESTAMP()) hours_since
+         UNIX_TIMESTAMP(IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above)) AS last_time
 FROM     (   SELECT temps.sensor_id,
                     temps.temp,
                     temps.num_records,
@@ -43,24 +41,20 @@ if ($result->num_rows > 0) {
 				echo "<th>Temp</th>";
 				echo "<th>Last Time</th>";
 				echo "<th></th>";
-			echo "</tr>";
+			echo "</tr>\n";
 		echo "</thead>";
 		echo "<tbody>";
 			while ($row = $result->fetch_assoc()) {
-				echo "<tr>" .
-				"<td>" . '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">'.
-				$row['description'] . $row["sensor"] .  '</a>' .
-				"</td>" .
-				"<td>" . $row["temperature"] . "</td>" .
-				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>' .
-				"<td>" . $row["min_temp"] . "</td>" .
-				'<td><span title="'. $row['min_time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['min_time']. '" data-livestamp="'. $row['min_time']. '"></span></td>' .
-				"<td>" . $row["max_temp"] . "</td>" .
-				'<td><span title="'. $row['max_time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['max_time']. '" data-livestamp="'. $row['max_time']. '"></span></td>' .
-				"</tr>";
+				echo "<tr>";
+					echo "<td>";
+						echo '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">';
+							echo $row['description'];
+						echo'</a>';
+					echo"</td>";
+					echo "<td>" . $row["temp"] . "</td>";
+					echo '<td><span title="'. $row['last_time']. '"><script>document.write(moment.unix("'. $row['last_time']. '").calendar());</script></span></td>';
+					echo '<td><span title="'. $row['last_time']. '" data-livestamp="'. $row['last_time']. '"></span></td>';
+				echo "</tr>\n";
 			}
 		echo "</tbody>";
 	echo "</table>";
