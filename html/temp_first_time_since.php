@@ -5,29 +5,28 @@
 require_once('mysqli_connect.php');
 
 $sql = "
-SELECT   t.sensor_id
+SELECT   t.sensor_id,
          sensors.description,
-         t.temp,
-         t.num_records,
+         t.temperature,
          UNIX_TIMESTAMP(IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above)) AS last_time
 FROM     (   SELECT temps.sensor_id,
-                    temps.temp,
+                    temps.temperature,
                     temps.num_records,
                     (   SELECT MAX(lastupdated)
                         FROM   hue_sensor_data AS h
                         WHERE  h.sensor_id = temps.sensor_id
-                            AND h.value >= temps.temp) AS last_time_below,
+                            AND h.value >= temps.temperature) AS last_time_below,
                     (   SELECT MAX(lastupdated)
                         FROM   hue_sensor_data AS h
                         WHERE  h.sensor_id = temps.sensor_id
-                            AND h.value <= temps.temp) AS last_time_above
-             FROM   (   SELECT   sensor_id, CAST(value AS SIGNED) AS temp, COUNT(*) AS num_records
+                            AND h.value <= temps.temperature) AS last_time_above
+             FROM   (   SELECT   sensor_id, CAST(value AS SIGNED) AS temperature, COUNT(*) AS num_records
                         FROM     hue_sensor_data
                         WHERE    type = 'temperature'
                         GROUP BY sensor_id, CAST(value AS SIGNED)) AS temps ) AS t
          JOIN hue_sensors AS sensors
              ON sensors.sensor_id = t.sensor_id
-ORDER BY t.sensor_id, t.temp;
+ORDER BY t.sensor_id, t.temperature;
 ";
 
 $result = $conn->query($sql);
@@ -51,7 +50,7 @@ if ($result->num_rows > 0) {
 							echo $row['description'];
 						echo'</a>';
 					echo"</td>";
-					echo "<td>" . $row["temp"] . "</td>";
+					echo "<td>" . $row["temperature"] . "</td>";
 					echo '<td><span title="'. $row['last_time']. '"><script>document.write(moment.unix("'. $row['last_time']. '").calendar());</script></span></td>';
 					echo '<td><span title="'. $row['last_time']. '" data-livestamp="'. $row['last_time']. '"></span></td>';
 				echo "</tr>\n";
