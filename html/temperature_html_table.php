@@ -2,42 +2,41 @@
 require_once('mysqli_connect.php');
 
 $sql = "
-SELECT	sensor.sensor_id,
-	sensor.description sensor,
-	ROUND(log.value,1) temperature,
-	UNIX_TIMESTAMP(log.lastupdated) time,
-	ROUND(log_min.value,1) AS min_temp,
-	UNIX_TIMESTAMP(log_min.lastupdated) min_time,
-	ROUND(log_max.value,1) AS max_temp,
-	UNIX_TIMESTAMP(log_max.lastupdated) max_time
-	/*
-	ROUND(min24,1) min24,
-	ROUND(max24,1) max24,
-	ROUND(max24-min24,1) delta24
-	*/
-FROM	hue_sensor_data log
-JOIN	hue_sensors sensor ON sensor.sensor_id = log.sensor_id
-LEFT JOIN	hue_sensor_data log_min ON log_min.id
-	=
-	(SELECT id
-	FROM hue_sensor_data h2
-	WHERE h2.sensor_id = log.sensor_id
-		AND lastupdated >= timestampadd(day,-1,UTC_TIMESTAMP())
-	ORDER BY value, id DESC
-	LIMIT 1
-	)
-LEFT JOIN	hue_sensor_data log_max ON log_max.id
-	=
-	(SELECT id
-	FROM hue_sensor_data h2
-	WHERE h2.sensor_id = log.sensor_id
-		AND lastupdated >= timestampadd(day,-1,UTC_TIMESTAMP())
-	ORDER BY value DESC, id DESC
-	LIMIT 1
-	)
-WHERE	log.type = 'temperature'
-	AND log.id IN (SELECT MAX(id) FROM hue_sensor_data GROUP BY sensor_id)
-ORDER BY	CASE WHEN description LIKE '%porch%' THEN 1 ELSE 2 END, sensor.description;
+SELECT   sensor.sensor_id,
+         sensor.description AS sensor,
+         ROUND(log.value, 1) AS temperature,
+         UNIX_TIMESTAMP(log.lastupdated) AS time,
+         ROUND(log_min.value, 1) AS min_temp,
+         UNIX_TIMESTAMP(log_min.lastupdated) AS min_time,
+         ROUND(log_max.value, 1) AS max_temp,
+         UNIX_TIMESTAMP(log_max.lastupdated) AS max_time
+FROM     hue_sensor_data AS log
+         JOIN hue_sensors AS sensor
+             ON sensor.sensor_id = log.sensor_id
+         LEFT JOIN hue_sensor_data AS log_min
+             ON log_min.id = (   SELECT   id
+                                 FROM     hue_sensor_data AS h2
+                                 WHERE    h2.sensor_id = log.sensor_id
+                                     AND lastupdated >= timestampadd(DAY, -1, UTC_TIMESTAMP())
+                                 ORDER BY value, id DESC
+                                 LIMIT 1
+             )
+         LEFT JOIN hue_sensor_data log_max
+             ON log_max.id = (   SELECT   TOP(1)
+                                          id
+                                 FROM     hue_sensor_data AS h2
+                                 WHERE    h2.sensor_id = log.sensor_id
+                                     AND lastupdated >= timestampadd(DAY, -1, UTC_TIMESTAMP())
+                                 ORDER BY value DESC, id DESC
+                                 LIMIT 1
+             )
+WHERE    log.type= 'temperature'
+    AND log.id IN( SELECT MAX(id)FROM hue_sensor_data GROUP BY sensor_id )
+ORDER BY CASE WHEN description LIKE '%porch%'
+                  THEN 1
+              ELSE 2
+         END,
+         sensor.description;
 ";
 
 $result = $conn->query($sql);
@@ -79,6 +78,6 @@ if ($result->num_rows > 0) {
 	echo "</table>";
 	echo "</div>";
 } else {
-    echo "0 results";
+	echo "0 results";
 }
 ?>

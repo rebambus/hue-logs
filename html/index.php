@@ -9,7 +9,7 @@
         <title>Hue Logs</title>
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-        
+
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
     </head>
@@ -38,7 +38,7 @@
     <!-- Icons -->
     <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
     <script>feather.replace()</script>
-    
+
     <!-- Fancy Timestamps -->
     <script src="js/moment.min.js"></script>
     <script src="js/livestamp.min.js"></script>
