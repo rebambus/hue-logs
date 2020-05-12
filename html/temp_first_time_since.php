@@ -7,28 +7,13 @@ require_once('mysqli_connect.php');
 $sql = "
 SELECT   t.sensor_id,
          sensors.description,
-         t.temperature,
-         UNIX_TIMESTAMP(IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above)) AS last_time
-FROM     (   SELECT temps.sensor_id,
-                    temps.temperature,
-                    temps.num_records,
-                    (   SELECT MAX(lastupdated)
-                        FROM   hue_sensor_data AS h
-                        WHERE  h.sensor_id = temps.sensor_id
-                            AND h.value >= temps.temperature) AS last_time_below,
-                    (   SELECT MAX(lastupdated)
-                        FROM   hue_sensor_data AS h
-                        WHERE  h.sensor_id = temps.sensor_id
-                            AND h.value <= temps.temperature) AS last_time_above
-             FROM   (   SELECT   sensor_id, CAST(value AS SIGNED) AS temperature, COUNT(*) AS num_records
-                        FROM     hue_sensor_data
-                        WHERE    type = 'temperature'
-                        GROUP BY sensor_id, CAST(value AS SIGNED)) AS temps ) AS t
+         CAST(value AS SIGNED) AS temperature,
+         UNIX_TIMESTAMP(MAX(lastupdated)) AS last_time
+FROM     hue_sensor_data AS t
          JOIN hue_sensors AS sensors
              ON sensors.sensor_id = t.sensor_id
-WHERE    t.last_time_below IS NOT NULL
-    AND t.last_time_above IS NOT NULL
-ORDER BY t.sensor_id, t.temperature;
+WHERE    type = 'temperature'
+GROUP BY sensor_id, CAST(value AS SIGNED);
 ";
 
 $result = $conn->query($sql);
