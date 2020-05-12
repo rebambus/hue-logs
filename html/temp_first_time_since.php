@@ -8,7 +8,7 @@ $sql = "
 SELECT   t.sensor_id,
          sensors.description,
          t.temperature,
-         UNIX_TIMESTAMP(IF(t.last_time_below < t.last_time_above, t.last_time_below, t.last_time_above)) AS last_time
+         UNIX_TIMESTAMP(IF(t.last_time_below < t.last_time_above OR t.last_time_above IS NULL, t.last_time_below, t.last_time_above)) AS last_time
 FROM     (   SELECT temps.sensor_id,
                     temps.temperature,
                     temps.num_records,
