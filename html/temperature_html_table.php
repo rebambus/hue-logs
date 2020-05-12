@@ -3,7 +3,7 @@ require_once('mysqli_connect.php');
 
 $sql = "
 SELECT   sensor.sensor_id,
-         sensor.description AS sensor,
+         sensor.description,
          ROUND(log.value, 1) AS temperature,
          UNIX_TIMESTAMP(log.lastupdated) AS time,
          ROUND(log_min.value, 1) AS min_temp,
@@ -55,23 +55,26 @@ if ($result->num_rows > 0) {
 				echo "<th>24 hr max</th>";
 				echo "<th></th>";
 				echo "<th></th>";
-			echo "</tr>";
+			echo "</tr>\n";
 		echo "</thead>";
 		echo "<tbody>";
 			while ($row = $result->fetch_assoc()) {
-				echo "<tr>" .
-				"<td>" . '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">'. $row['description'] .
-					$row["sensor"] .  '</a>' . "</td>" .
-				"<td>" . $row["temperature"] . "</td>" .
-				'<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>' .
-				"<td>" . $row["min_temp"] . "</td>" .
-				'<td><span title="'. $row['min_time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['min_time']. '" data-livestamp="'. $row['min_time']. '"></span></td>' .
-				"<td>" . $row["max_temp"] . "</td>" .
-				'<td><span title="'. $row['max_time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>' .
-				'<td><span title="'. $row['max_time']. '" data-livestamp="'. $row['max_time']. '"></span></td>' .
-				"</tr>";
+				echo "<tr>";
+				echo "<td>";
+					echo '<a href="index.php?' . http_build_query(array_merge($_GET, array("page"=>"sensors","id"=>$row['sensor_id']))) . '">';
+						echo $row['description'];
+					echo'</a>';
+				echo"</td>";
+				echo "<td>" . $row["temperature"] . "</td>";
+				echo '<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>';
+				echo '<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>';
+				echo "<td>" . $row["min_temp"] . "</td>";
+				echo '<td><span title="'. $row['min_time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>';
+				echo '<td><span title="'. $row['min_time']. '" data-livestamp="'. $row['min_time']. '"></span></td>';
+				echo "<td>" . $row["max_temp"] . "</td>";
+				echo '<td><span title="'. $row['max_time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>';
+				echo '<td><span title="'. $row['max_time']. '" data-livestamp="'. $row['max_time']. '"></span></td>';
+				echo "</tr>\n";
 			}
 		echo "</tbody>";
 	echo "</table>";
