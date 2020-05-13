@@ -1,5 +1,5 @@
 <script type="text/javascript" src="http://momentjs.com/downloads/moment.js"></script>
-<h1 class="bd-title">Temperature</h1>
+<h1 class="bd-title">Timeline</h1>
 
 <?php
 require_once('mysqli_connect.php');
@@ -22,7 +22,7 @@ FROM     (   SELECT lastupdated AS time,
              FROM   hue_sensor_data AS l
                     JOIN hue_sensors AS sensor
                         ON sensor.sensor_id = l.sensor_id
-             WHERE  type = 'motion'
+             WHERE  type = 'motion' AND value = 1
              UNION ALL
              SELECT start_time AS time,
                     CONCAT(
@@ -46,7 +46,8 @@ FROM     (   SELECT lastupdated AS time,
                     END feather
              FROM   light_history AS l
                     JOIN lights AS light
-                        ON light.id = l.light_id) t
+                        ON light.id = l.light_id
+             WHERE  l.state = 1) t
 ORDER BY t.TIME DESC
 LIMIT 100;
 ";
