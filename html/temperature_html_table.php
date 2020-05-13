@@ -7,8 +7,10 @@ SELECT   sensor.sensor_id,
          ROUND(log.value, 1) AS temperature,
          UNIX_TIMESTAMP(log.lastupdated) AS time,
          ROUND(log_min.value, 1) AS min_temp,
+         ROUND(log_min.value - log.value, 1) AS min_diff,
          UNIX_TIMESTAMP(log_min.lastupdated) AS min_time,
          ROUND(log_max.value, 1) AS max_temp,
+         ROUND(log_max.value - log.value, 1) AS max_diff,
          UNIX_TIMESTAMP(log_max.lastupdated) AS max_time
 FROM     hue_sensor_data AS log
          JOIN hue_sensors AS sensor
@@ -52,7 +54,9 @@ if ($result->num_rows > 0) {
 				echo "<th>24 hr min</th>";
 				echo "<th></th>";
 				echo "<th></th>";
+				echo "<th></th>";
 				echo "<th>24 hr max</th>";
+				echo "<th></th>";
 				echo "<th></th>";
 				echo "<th></th>";
 			echo "</tr>\n";
@@ -69,9 +73,11 @@ if ($result->num_rows > 0) {
 				echo '<td><span title="'. $row['time']. '"><script>document.write(moment.unix("'. $row['time']. '").calendar());</script></span></td>';
 				echo '<td><span title="'. $row['time']. '" data-livestamp="'. $row['time']. '"></span></td>';
 				echo "<td>" . $row["min_temp"] . "</td>";
+				echo "<td>" . $row["min_diff"] . "</td>";
 				echo '<td><span title="'. $row['min_time']. '"><script>document.write(moment.unix("'. $row['min_time']. '").calendar());</script></span></td>';
 				echo '<td><span title="'. $row['min_time']. '" data-livestamp="'. $row['min_time']. '"></span></td>';
 				echo "<td>" . $row["max_temp"] . "</td>";
+				echo "<td>" . $row["max_diff"] . "</td>";
 				echo '<td><span title="'. $row['max_time']. '"><script>document.write(moment.unix("'. $row['max_time']. '").calendar());</script></span></td>';
 				echo '<td><span title="'. $row['max_time']. '" data-livestamp="'. $row['max_time']. '"></span></td>';
 				echo "</tr>\n";
