@@ -35,6 +35,7 @@ if (isset($_GET['output'])) {
         echo '<th>Front Porch</th>';
         echo '<th>Front Hallway</th>';
         echo '<th>Back Porch</th>';
+        echo '<th>Outdoor</th>';
         echo '</tr>';
         while ($row = $result->fetch_assoc()) {
             echo '<tr>';
@@ -45,6 +46,7 @@ if (isset($_GET['output'])) {
             echo '<td>'. $row['front_porch']. '</td>';
             echo '<td>'. $row['front_hallway']. '</td>';
             echo '<td>'. $row['back_porch']. '</td>';
+            echo '<td>'. $row['outdoor']. '</td>';
             echo '</tr>';
         }
         echo '</table>';
@@ -60,7 +62,8 @@ $table['cols'] = array(
   array('id' => 'Bathroom',	'label' => 'Bathroom',	'type' => 'number'),
   array('id' => 'Front_Porch',	'label' => 'Front_Porch',	'type' => 'number'),
   array('id' => 'Front_Hallway',	'label' => 'Front_Hallway',	'type' => 'number'),
-  array('id' => 'Back_Porch',	'label' => 'Back_Porch',	'type' => 'number')
+  array('id' => 'Back_Porch',	'label' => 'Back_Porch',	'type' => 'number'),
+  array('id' => 'Outdoor',	'label' => 'Outdoor',	'type' => 'number')
 );
 
 $rows = array();
@@ -74,7 +77,8 @@ if ($result->num_rows > 0) {
         $temp[] = array('v' => $row['bathroom']);
         $temp[] = array('v' => $row['front_porch']);
         $temp[] = array('v' => $row['front_hallway']);
-        $temp[] = array('v' => $row['back_porch']);
+        $temp[] = array('v' => $row['back_porch']);;
+        $temp[] = array('v' => $row['outdoor']);
 
         $rows[] = array('c' => $temp);
         ;
