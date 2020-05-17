@@ -5,7 +5,7 @@ require_once('mysqli_connect.php');
 $sql = file_get_contents("chart_light_timeline.sql");
 
 if (isset($_GET['hours_back'])) {
-    $sql = str_replace("HOUR,-24", "HOUR,-".$_GET['hours_back'], $sql);
+    $sql = str_replace("HOUR, -24", "HOUR, -".$_GET['hours_back'], $sql);
 }
 
 // if ?output=sql, return SQL query
