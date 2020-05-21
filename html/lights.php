@@ -74,6 +74,7 @@ SELECT	log.light_id,
 		WHEN state = 1 AND brightness = 0 THEN 'On'
 		WHEN state = 1 THEN CONCAT(ROUND(100.*brightness/254.,0),' %') ELSE 'Unknown' END state,
 	time_on.seconds_on AS seconds_on_last24,
+	time_on.total_seconds_on AS total_seconds_on,
 	UNIX_TIMESTAMP(last_on.last_on) last_on,
 	last_on.seconds_on last_on_seconds_on,
 	CASE WHEN state = 1 THEN '<span data-feather=''sun''></span>' ELSE '' END feather
@@ -82,10 +83,10 @@ JOIN	lights lights ON lights.id = log.light_id
 LEFT JOIN	(
 	SELECT	light_id,
 		SUM(TIMESTAMPDIFF(SECOND,CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time
-			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END,end_time)) seconds_on
+			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END,end_time)) seconds_on,
+		SUM(TIMESTAMPDIFF(SECOND,start_time,end_time)) total_seconds_on
 	FROM	light_history AS log
-	WHERE	end_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP())
-		AND state = 1
+	WHERE	AND state = 1
 	GROUP BY	light_id
 	) time_on ON time_on.light_id = lights.id
 LEFT JOIN	(
@@ -114,6 +115,7 @@ ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 				<th></th>
 				<th>... for</th>
 				<th>Time On Last 24</th>
+				<th>Total Time On</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -127,6 +129,7 @@ ORDER BY	last_on.last_on DESC, last_on.seconds_on DESC, description;
 				echo '<td><span title="'. $row['start_time']. '" data-livestamp="'. $row['last_on']. '"></span></td>';
 				echo '<td><script>document.write(moment.duration('. $row['last_on_seconds_on']. ',"seconds").humanize());</script></td>';
 				echo '<td><script>document.write(moment.duration('. $row['seconds_on_last24']. ',"seconds").humanize());</script></td>';
+				echo '<td><script>document.write(moment.duration('. $row['total_seconds_on']. ',"seconds").humanize());</script></td>';
 				echo '</tr>';
 			}
 			?>
