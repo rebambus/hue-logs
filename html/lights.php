@@ -83,10 +83,13 @@ JOIN	lights lights ON lights.id = log.light_id
 LEFT JOIN	(
 	SELECT	light_id,
 		SUM(TIMESTAMPDIFF(SECOND,CASE WHEN start_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN start_time
-			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END,end_time)) seconds_on,
+			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END,
+			CASE WHEN end_time > TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) THEN end_time
+			ELSE TIMESTAMPADD(HOUR,-24,UTC_TIMESTAMP()) END
+			)) seconds_on,
 		SUM(TIMESTAMPDIFF(SECOND,start_time,end_time)) total_seconds_on
 	FROM	light_history AS log
-	WHERE	AND state = 1
+	WHERE	state = 1
 	GROUP BY	light_id
 	) time_on ON time_on.light_id = lights.id
 LEFT JOIN	(
