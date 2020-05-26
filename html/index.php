@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="description" content="Data collection from Phillips Hue Hub JSON API">
 		<meta name="author" content="Tom Butler">
-		<meta http-equiv="refresh" content="60">
+		<meta http-equiv="refresh" content="300">
 		<link rel="icon" href="favicon.ico">
 		<title>Hue Logs</title>
 		<!-- Bootstrap core CSS -->
