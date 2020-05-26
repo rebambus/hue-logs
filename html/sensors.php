@@ -11,8 +11,8 @@ SELECT sensor.sensor_id,
   	log.type,
   	CASE WHEN log.type = 'lightlevel' THEN CONCAT(ROUND(100*CAST(log.value AS UNSIGNED)/30000,0),' %')
   		WHEN log.type = 'temperature' THEN CONCAT(ROUND(log.value,1), ' °F')
-  		WHEN log.type = 'motion' AND value = '1' THEN CONCAT('Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
-  		WHEN log.type = 'motion' AND value = '0' THEN CONCAT('No Activity for ',(SELECT MIN(next.lastupdated) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+  		WHEN log.type = 'motion' AND value = '1' THEN CONCAT('Activity for ',(SELECT UNIX_TIMESTAMP(MIN(next.lastupdated)) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
+  		WHEN log.type = 'motion' AND value = '0' THEN CONCAT('No Activity for ',(SELECT UNIX_TIMESTAMP(MIN(next.lastupdated)) FROM hue_sensor_data next WHERE next.sensor_id = log.sensor_id AND next.lastupdated > log.lastupdated))
   		ELSE log.value
   	END value
   FROM hue_sensor_data log
