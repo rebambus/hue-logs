@@ -1,4 +1,4 @@
--- Adminer 4.7.6 MySQL dump
+-- Adminer 4.7.8 MySQL dump
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
@@ -37,40 +37,48 @@ END;;
 DROP PROCEDURE IF EXISTS `hue_record_light_history`;;
 CREATE PROCEDURE `hue_record_light_history`(IN `uniqueid` varchar(100), IN `description` varchar(100), IN `state` bit, IN `brightness` int, IN `reachable` bit)
 BEGIN
+
+SELECT @light_id := id
+FROM lights
+WHERE lights.uniqueid = uniqueid;
+
+IF @light_id IS NULL THEN
+	INSERT INTO lights (description, uniqueid)
+	VALUES (description, uniqueid);
+
 	SELECT @light_id := id
 	FROM lights
 	WHERE lights.uniqueid = uniqueid;
+END IF;
 
-	IF @light_id IS NULL THEN
-		INSERT INTO lights (description, uniqueid)
-		VALUES (description, uniqueid);
+UPDATE lights
+SET description = description
+WHERE id = @light_id;
 
-		SELECT @light_id := id
-		FROM lights
-		WHERE lights.uniqueid = uniqueid;
-	END IF;
+-- new
+SELECT	@current_id := id,
+	@current_state := state,
+	@current_brightness := brightness,
+	@current_reachable := reachable,
+	@current_end_time := end_time
+FROM light_history
+WHERE light_id = @light_id
+ORDER BY id DESC
+LIMIT 1;
 
-        UPDATE lights
-        SET description = description
-        WHERE id = @light_id;
-	
-	SELECT @id := MAX(id)
-	FROM light_history lh
-	WHERE lh.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)
-                AND lh.light_id = @light_id
-		AND lh.state = state
-		AND lh.brightness = brightness
-		AND lh.reachable = reachable
-		AND lh.end_time >= DATE_ADD(UTC_TIMESTAMP(), INTERVAL -5 MINUTE);
+IF	@current_state = state
+	AND @current_brightness = brightness
+	AND @current_reachable = reachable
+	AND @current_end_time >= DATE_ADD(UTC_TIMESTAMP(), INTERVAL -5 MINUTE)
+THEN
+	UPDATE light_history
+	SET end_time = UTC_TIMESTAMP()
+	WHERE id = @current_id;
+ELSE
+	INSERT INTO light_history (light_id, start_time, end_time, state, brightness, reachable)
+	VALUES (@light_id, UTC_TIMESTAMP(), UTC_TIMESTAMP(), state, brightness, reachable);
+END IF;
 
-	IF @id IS NOT NULL THEN
-		UPDATE light_history
-		SET end_time = UTC_TIMESTAMP()
-		WHERE light_history.id = @id;
-	ELSE
-		INSERT INTO light_history (light_id, start_time, end_time, state, brightness, reachable)
-		VALUES (@light_id, UTC_TIMESTAMP(), UTC_TIMESTAMP(), state, brightness, reachable);
-	END IF;
 END;;
 
 DROP PROCEDURE IF EXISTS `min_max_temp_by_day`;;
@@ -141,4 +149,4 @@ CREATE TABLE `light_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2021-01-15 15:51:54
+-- 2021-01-15 17:51:24
