@@ -19,6 +19,10 @@ BEGIN
   SET @sensor_id = NULL;
   SELECT @sensor_id := sensor_id FROM hue_sensors WHERE hue_sensors.uniqueid = @uniqueid;
 
+--  UPDATE hue_sensors
+--  SET description = @description
+--  WHERE sensor_id = @sensor_id;
+
   IF @sensor_id IS NULL THEN
     INSERT INTO hue_sensors (description, uniqueid)
     VALUES (@description, @uniqueid);
@@ -45,6 +49,10 @@ BEGIN
 		FROM lights
 		WHERE lights.uniqueid = uniqueid;
 	END IF;
+
+        UPDATE lights
+        SET description = description
+        WHERE id = @light_id;
 	
 	SELECT @id := MAX(id)
 	FROM light_history lh
@@ -65,6 +73,21 @@ BEGIN
 	END IF;
 END;;
 
+DROP PROCEDURE IF EXISTS `min_max_temp_by_day`;;
+CREATE PROCEDURE `min_max_temp_by_day`()
+SELECT   s.description AS sensor,
+         CAST(sd.lastupdated AS date) AS date,
+         MIN(sd.value) AS min_temp,
+         MAX(sd.value) AS max_temp
+FROM     hue_sensor_data AS sd
+         LEFT JOIN hue_sensors AS s
+             ON s.sensor_id = sd.sensor_id
+WHERE    sd.type = 'temperature'
+GROUP BY s.description,
+         CAST(sd.lastupdated AS date)
+ORDER BY date DESC,
+         sensor;;
+
 DELIMITER ;
 
 DROP TABLE IF EXISTS `hue_sensors`;
@@ -72,7 +95,8 @@ CREATE TABLE `hue_sensors` (
   `sensor_id` int(11) NOT NULL AUTO_INCREMENT,
   `description` varchar(100) NOT NULL,
   `uniqueid` varchar(100) NOT NULL,
-  PRIMARY KEY (`sensor_id`)
+  PRIMARY KEY (`sensor_id`),
+  KEY `uniqueid` (`uniqueid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -85,7 +109,7 @@ CREATE TABLE `hue_sensor_data` (
   `value` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `sensor_id_lastupdated` (`sensor_id`,`lastupdated`),
-  KEY `sensor_id` (`sensor_id`),
+  KEY `lastupdated` (`lastupdated`),
   CONSTRAINT `hue_sensor_data_ibfk_1` FOREIGN KEY (`sensor_id`) REFERENCES `hue_sensors` (`sensor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -95,7 +119,8 @@ CREATE TABLE `lights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `description` varchar(100) NOT NULL,
   `uniqueid` varchar(100) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `uniqueid` (`uniqueid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -110,8 +135,10 @@ CREATE TABLE `light_history` (
   `reachable` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `light_id` (`light_id`),
+  KEY `start_time` (`start_time`),
+  KEY `end_time` (`end_time`),
   CONSTRAINT `light_history_ibfk_1` FOREIGN KEY (`light_id`) REFERENCES `lights` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2020-05-11 14:26:28
+-- 2021-01-15 15:51:54
