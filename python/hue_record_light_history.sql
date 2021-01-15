@@ -12,6 +12,10 @@ BEGIN
 		WHERE lights.uniqueid = uniqueid;
 	END IF;
 
+        UPDATE lights
+        SET description = description
+        WHERE id = @light_id;
+	
 	SELECT @id := MAX(id)
 	FROM light_history lh
 	WHERE lh.id IN (SELECT MAX(id) FROM light_history GROUP BY light_id)

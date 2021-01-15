@@ -8,6 +8,10 @@ BEGIN
   SET @sensor_id = NULL;
   SELECT @sensor_id := sensor_id FROM hue_sensors WHERE hue_sensors.uniqueid = @uniqueid;
 
+--  UPDATE hue_sensors
+--  SET description = @description
+--  WHERE sensor_id = @sensor_id;
+
   IF @sensor_id IS NULL THEN
     INSERT INTO hue_sensors (description, uniqueid)
     VALUES (@description, @uniqueid);
