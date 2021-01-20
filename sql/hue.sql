@@ -5,9 +5,12 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
+DROP DATABASE IF EXISTS `hue`;
+CREATE DATABASE `hue` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `hue`;
+
 DELIMITER ;;
 
-DROP PROCEDURE IF EXISTS `hue_log_sensor_data`;;
 CREATE PROCEDURE `hue_log_sensor_data`(IN `uniqueid` varchar(100), IN `description` varchar(100), IN `lastupdated` datetime, IN `type` varchar(100), IN `value` float)
 BEGIN
   SET @uniqueid = `uniqueid`;
@@ -34,7 +37,6 @@ BEGIN
   VALUES (@sensor_id, @lastupdated, @type, @value);
 END;;
 
-DROP PROCEDURE IF EXISTS `hue_record_light_history`;;
 CREATE PROCEDURE `hue_record_light_history`(IN `uniqueid` varchar(100), IN `description` varchar(100), IN `state` bit, IN `brightness` int, IN `reachable` bit)
 BEGIN
 
@@ -46,8 +48,8 @@ IF @light_id IS NULL THEN
 	INSERT INTO lights (description, uniqueid)
 	VALUES (description, uniqueid);
 
-	SELECT @light_id := id
-	FROM lights
+	SELECT @light_id := lights.id
+	FROM lights lights
 	WHERE lights.uniqueid = uniqueid;
 END IF;
 
@@ -56,14 +58,14 @@ SET description = description
 WHERE id = @light_id;
 
 -- new
-SELECT	@current_id := id,
-	@current_state := state,
-	@current_brightness := brightness,
-	@current_reachable := reachable,
-	@current_end_time := end_time
-FROM light_history
-WHERE light_id = @light_id
-ORDER BY id DESC
+SELECT	@current_id := lh.id,
+	@current_state := lh.state,
+	@current_brightness := lh.brightness,
+	@current_reachable := lh.reachable,
+	@current_end_time := lh.end_time
+FROM light_history lh
+WHERE lh.light_id = @light_id
+ORDER BY lh.id DESC
 LIMIT 1;
 
 IF	@current_state = state
@@ -81,7 +83,6 @@ END IF;
 
 END;;
 
-DROP PROCEDURE IF EXISTS `min_max_temp_by_day`;;
 CREATE PROCEDURE `min_max_temp_by_day`()
 SELECT   s.description AS sensor,
          CAST(sd.lastupdated AS date) AS date,
@@ -107,6 +108,28 @@ CREATE TABLE `hue_sensors` (
   KEY `uniqueid` (`uniqueid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `hue_sensors` (`sensor_id`, `description`, `uniqueid`) VALUES
+(2,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0406'),
+(3,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0402'),
+(4,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0406'),
+(5,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0400'),
+(6,	'Front Hallway',	'00:17:88:01:02:10:de:e8-02-0400'),
+(7,	'Front Hallway',	'00:17:88:01:02:10:de:e8-02-0402'),
+(8,	'Front Hallway',	'00:17:88:01:02:10:de:e8-02-0406'),
+(9,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0406'),
+(10,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0400'),
+(11,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0402'),
+(12,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0400'),
+(13,	'Basement',	'00:17:88:01:02:03:b2:71-02-0402'),
+(14,	'Basement',	'00:17:88:01:02:03:b2:71-02-0400'),
+(15,	'Basement',	'00:17:88:01:02:03:b2:71-02-0406'),
+(16,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0402'),
+(17,	'Hue motion sensor 1',	'00:17:88:01:02:03:ee:fe-02-0406'),
+(18,	'Hue temperature sensor 8',	'00:17:88:01:02:03:ee:fe-02-0402'),
+(19,	'Hue ambient light sensor 8',	'00:17:88:01:02:03:ee:fe-02-0400'),
+(20,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0406'),
+(21,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0400'),
+(22,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0402');
 
 DROP TABLE IF EXISTS `hue_sensor_data`;
 CREATE TABLE `hue_sensor_data` (
@@ -131,6 +154,49 @@ CREATE TABLE `lights` (
   KEY `uniqueid` (`uniqueid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+INSERT INTO `lights` (`id`, `description`, `uniqueid`) VALUES
+(2,	'Chandelier 4',	'00:17:88:01:06:c0:80:d7-0b'),
+(3,	'Chandelier 5',	'00:17:88:01:06:c0:7d:02-0b'),
+(4,	'Blue Lamp',	'00:17:88:01:02:96:b9:db-0b'),
+(5,	'Bathroom 3',	'00:17:88:01:02:95:0a:d2-0b'),
+(6,	'Fringe Floor Lamp',	'00:17:88:01:02:96:bb:e9-0b'),
+(7,	'Green Lamp',	'00:17:88:01:02:f4:c9:37-0b'),
+(10,	'Pinball Room Ceiling',	'00:17:88:01:02:f5:29:ea-0b'),
+(11,	'Christmas Tree',	'00:17:88:01:02:96:bf:48-0b'),
+(12,	'Basement Room',	'00:17:88:01:02:1e:80:61-0b'),
+(13,	'Counter Left',	'00:17:88:01:02:ad:cf:bb-0b'),
+(14,	'Chandelier 3',	'00:17:88:01:06:c0:7c:64-0b'),
+(15,	'Chandelier 6',	'00:17:88:01:06:c0:93:c8-0b'),
+(16,	'New Globe',	'00:17:88:01:02:32:48:bb-0b'),
+(17,	'Bedroom Floor Lamp',	'00:17:88:01:02:34:7a:9c-0b'),
+(18,	'Bookshelf',	'00:17:88:01:02:32:72:8b-0b'),
+(19,	'Basement by Washer',	'00:17:88:01:02:28:d5:ab-0b'),
+(20,	'Light above the sink',	'00:17:88:01:02:3f:d5:51-0b'),
+(21,	'Little Lamp',	'00:17:88:01:02:56:67:61-0b'),
+(22,	'Basement Steps',	'00:17:88:01:02:56:67:21-0b'),
+(23,	'Basement by Water Heater',	'00:17:88:01:02:24:82:e3-0b'),
+(24,	'Basement By Dryer',	'00:17:88:01:02:2a:dd:ed-0b'),
+(25,	'Chandelier 1',	'00:17:88:01:06:c0:85:0c-0b'),
+(26,	'Chandelier 2',	'00:17:88:01:06:c0:7e:94-0b'),
+(27,	'Yellow Lamp',	'00:17:88:01:02:1f:81:27-0b'),
+(28,	'Green Bedroom Lamp',	'00:17:88:01:02:1f:55:ad-0b'),
+(29,	'Front Porch',	'00:17:88:01:02:1e:95:c3-0b'),
+(30,	'IKEA Floor Lamp',	'00:17:88:01:02:1f:78:85-0b'),
+(31,	'Teal and Bronze Lamp',	'00:17:88:01:02:f7:e0:8b-0b'),
+(32,	'Teal Lamp',	'00:17:88:01:02:83:1c:3a-0b'),
+(33,	'Basement by Furnace',	'00:17:88:01:02:f0:2d:4f-0b'),
+(34,	'Back Porch',	'00:17:88:01:02:80:43:b2-0b'),
+(35,	'Pinball Room Ceiling',	'00:17:88:01:02:80:1d:4f-0b'),
+(36,	'Bathroom 2',	'00:17:88:01:02:80:2e:df-0b'),
+(37,	'Spare Room Ceiling',	'00:17:88:01:02:56:93:49-0b'),
+(38,	'Counter Right',	'00:17:88:01:02:ad:cf:a7-0b'),
+(39,	'Outdoor String Lights',	'00:17:88:01:08:05:51:6f-0b'),
+(40,	'Front Hallway',	'00:17:88:01:08:14:23:c7-0b'),
+(41,	'Dining Room Light',	'00:17:88:01:06:c2:bd:9b-0b'),
+(42,	'Dining Room Light',	'00:17:88:01:06:c2:d6:b6-0b'),
+(43,	'Dining Room Light',	'00:17:88:01:06:c2:ea:51-0b'),
+(44,	'Spare Room Ceiling',	'00:17:88:01:02:ba:ff:6f-0b'),
+(50,	'Hue ambient light sensor 6',	'00:17:88:01:02:03:ee:fe-02-0400');
 
 DROP TABLE IF EXISTS `light_history`;
 CREATE TABLE `light_history` (
@@ -149,4 +215,4 @@ CREATE TABLE `light_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2021-01-15 17:51:24
+-- 2021-01-20 00:06:14
