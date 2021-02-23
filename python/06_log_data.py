@@ -85,4 +85,4 @@ while True:
     else:
         response.raise_for_status()
 
-    time.sleep(5)
+    time.sleep(15)
