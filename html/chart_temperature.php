@@ -31,6 +31,7 @@ if (isset($_GET['output'])) {
         echo '<th>Time</th>';
         echo '<th>Back Porch</th>';
         echo '<th>Front Porch</th>';
+        echo '<th>Front Porch old</th>';
         echo '<th>Basement</th>';
         echo '<th>Bathroom</th>';
         echo '<th>Front Hallway</th>';
@@ -42,6 +43,7 @@ if (isset($_GET['output'])) {
             echo '<td>'. $row['lastupdated']. '</td>';
             echo '<td>'. $row['back_porch']. '</td>';
             echo '<td>'. $row['front_porch']. '</td>';
+            echo '<td>'. $row['front_porch_old']. '</td>';
             echo '<td>'. $row['basement']. '</td>';
             echo '<td>'. $row['bathroom']. '</td>';
             echo '<td>'. $row['front_hallway']. '</td>';
@@ -59,6 +61,7 @@ $table['cols'] = array(
   array('id' => 'Last_Updated',	'label' => 'Last Updated',	'type' => 'datetime',	'role' => 'domain'),
   array('id' => 'Back_Porch',	'label' => 'Back Porch',	'type' => 'number'),
   array('id' => 'Front_Porch',	'label' => 'Front Porch',	'type' => 'number'),
+  array('id' => 'Front_Porch_old',	'label' => 'Front Porch old',	'type' => 'number'),
   array('id' => 'Basement',	'label' => 'Basement',	'type' => 'number'),
   array('id' => 'Bathroom',	'label' => 'Bathroom',	'type' => 'number'),
   array('id' => 'Front_Hallway',	'label' => 'Front Hallway',	'type' => 'number'),
@@ -74,6 +77,7 @@ if ($result->num_rows > 0) {
         $temp[] = array('v' => 'Date(' . 1000*$row['lastupdated'] .')');
         $temp[] = array('v' => $row['back_porch']);;
         $temp[] = array('v' => $row['front_porch']);
+        $temp[] = array('v' => $row['front_porch_old']);
         $temp[] = array('v' => $row['basement']);
         $temp[] = array('v' => $row['bathroom']);
         $temp[] = array('v' => $row['front_hallway']);
