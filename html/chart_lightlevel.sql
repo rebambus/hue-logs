@@ -4,6 +4,7 @@ SELECT
 		ROUND(upstairs_hallway,2) upstairs_hallway,
 		ROUND(bathroom,2) bathroom,
 		ROUND(front_porch,2) front_porch,
+		ROUND(front_porch_old,2) front_porch_old,
 		ROUND(front_hallway,2) front_hallway,
 		ROUND(back_porch,2) back_porch,
 		ROUND(outdoor_sensor,2) outdoor_sensor
@@ -13,6 +14,7 @@ FROM (SELECT
 				AVG(CASE description WHEN 'Upstairs Hallway' THEN value END) AS upstairs_hallway,
 				AVG(CASE description WHEN 'Bathroom'         THEN value END) AS bathroom,
 				AVG(CASE description WHEN 'Front Porch'      THEN value END) AS front_porch,
+				AVG(CASE description WHEN 'Front Porch old'  THEN value END) AS front_porch_old,
 				AVG(CASE description WHEN 'Front Hallway'    THEN value END) AS front_hallway,
 				AVG(CASE description WHEN 'Back Porch'       THEN value END) AS back_porch,
 				AVG(CASE description WHEN 'Outdoor Sensor'   THEN value END) AS outdoor_sensor

@@ -30,6 +30,7 @@ if (isset($_GET['output'])) {
         echo '<th>Upstairs Hallway</th>';
         echo '<th>Bathroom</th>';
         echo '<th>Front Porch</th>';
+        echo '<th>Front Porch old</th>';
         echo '<th>Front Hallway</th>';
         echo '<th>Back Porch</th>';
         echo '<th>Outdoor Sensor</th>';
@@ -41,6 +42,7 @@ if (isset($_GET['output'])) {
             echo '<td>'. $row['upstairs_hallway']. '</td>';
             echo '<td>'. $row['bathroom']. '</td>';
             echo '<td>'. $row['front_porch']. '</td>';
+            echo '<td>'. $row['front_porch_old']. '</td>';
             echo '<td>'. $row['front_hallway']. '</td>';
             echo '<td>'. $row['back_porch']. '</td>';
             echo '<td>'. $row['outdoor_sensor']. '</td>';
@@ -55,12 +57,13 @@ $table = array();
 $table['cols'] = array(
   array('id' => 'Last Updated',	'label' => 'Last Updated',	'type' => 'datetime',	'role' => 'domain'),
   array('id' => 'Basement',	'label' => 'Basement',	'type' => 'number'),
-  array('id' => 'Upstairs_Hallway',	'label' => 'Upstairs_Hallway',	'type' => 'number'),
+  array('id' => 'Upstairs_Hallway',	'label' => 'Upstairs Hallway',	'type' => 'number'),
   array('id' => 'Bathroom',	'label' => 'Bathroom',	'type' => 'number'),
-  array('id' => 'Front_Porch',	'label' => 'Front_Porch',	'type' => 'number'),
-  array('id' => 'Front_Hallway',	'label' => 'Front_Hallway',	'type' => 'number'),
-  array('id' => 'Back_Porch',	'label' => 'Back_Porch',	'type' => 'number'),
-  array('id' => 'Outdoor_Sensor',	'label' => 'Outdoor_Sensor',	'type' => 'number')
+  array('id' => 'Front_Porch',	'label' => 'Front Porch',	'type' => 'number'),
+  array('id' => 'Front_Porch_Old',	'label' => 'Front Porch_Old',	'type' => 'number'),
+  array('id' => 'Front_Hallway',	'label' => 'Front Hallway',	'type' => 'number'),
+  array('id' => 'Back_Porch',	'label' => 'Back Porch',	'type' => 'number'),
+  array('id' => 'Outdoor_Sensor',	'label' => 'Outdoor Sensor',	'type' => 'number')
 );
 
 $rows = array();
@@ -73,6 +76,7 @@ if ($result->num_rows > 0) {
         $temp[] = array('v' => $row['upstairs_hallway']);
         $temp[] = array('v' => $row['bathroom']);
         $temp[] = array('v' => $row['front_porch']);
+        $temp[] = array('v' => $row['front_porch_old']);
         $temp[] = array('v' => $row['front_hallway']);
         $temp[] = array('v' => $row['back_porch']);
         $temp[] = array('v' => $row['outdoor_sensor']);
