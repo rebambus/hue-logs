@@ -22,9 +22,9 @@ BEGIN
   SET @sensor_id = NULL;
   SELECT @sensor_id := sensor_id FROM hue_sensors WHERE hue_sensors.uniqueid = @uniqueid;
 
---  UPDATE hue_sensors
---  SET description = @description
---  WHERE sensor_id = @sensor_id;
+  UPDATE hue_sensors
+  SET description = @description
+  WHERE sensor_id = @sensor_id;
 
   IF @sensor_id IS NULL THEN
     INSERT INTO hue_sensors (description, uniqueid)
@@ -109,8 +109,8 @@ CREATE TABLE `hue_sensors` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `hue_sensors` (`sensor_id`, `description`, `uniqueid`) VALUES
-(2,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0406'),
-(3,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0402'),
+(2,	'Front Porch old',	'00:17:88:01:02:10:1a:96-02-0406'),
+(3,	'Front Porch old',	'00:17:88:01:02:10:1a:96-02-0402'),
 (4,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0406'),
 (5,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0400'),
 (6,	'Front Hallway',	'00:17:88:01:02:10:de:e8-02-0400'),
@@ -119,17 +119,20 @@ INSERT INTO `hue_sensors` (`sensor_id`, `description`, `uniqueid`) VALUES
 (9,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0406'),
 (10,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0400'),
 (11,	'Bathroom',	'00:17:88:01:02:10:d9:72-02-0402'),
-(12,	'Front Porch',	'00:17:88:01:02:10:1a:96-02-0400'),
+(12,	'Front Porch old',	'00:17:88:01:02:10:1a:96-02-0400'),
 (13,	'Basement',	'00:17:88:01:02:03:b2:71-02-0402'),
 (14,	'Basement',	'00:17:88:01:02:03:b2:71-02-0400'),
 (15,	'Basement',	'00:17:88:01:02:03:b2:71-02-0406'),
 (16,	'Upstairs Hallway',	'00:17:88:01:02:03:b2:f2-02-0402'),
-(17,	'Hue motion sensor 1',	'00:17:88:01:02:03:ee:fe-02-0406'),
-(18,	'Hue temperature sensor 8',	'00:17:88:01:02:03:ee:fe-02-0402'),
-(19,	'Hue ambient light sensor 8',	'00:17:88:01:02:03:ee:fe-02-0400'),
+(17,	'Living Room',	'00:17:88:01:02:03:ee:fe-02-0406'),
+(18,	'Living Room',	'00:17:88:01:02:03:ee:fe-02-0402'),
+(19,	'Living Room',	'00:17:88:01:02:03:ee:fe-02-0400'),
 (20,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0406'),
 (21,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0400'),
-(22,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0402');
+(22,	'Back Porch',	'00:17:88:01:06:45:44:ec-02-0402'),
+(23,	'Front Porch',	'00:17:88:01:06:45:ac:29-02-0400'),
+(24,	'Front Porch',	'00:17:88:01:06:45:ac:29-02-0406'),
+(25,	'Front Porch',	'00:17:88:01:06:45:ac:29-02-0402');
 
 DROP TABLE IF EXISTS `hue_sensor_data`;
 CREATE TABLE `hue_sensor_data` (
@@ -161,8 +164,8 @@ INSERT INTO `lights` (`id`, `description`, `uniqueid`) VALUES
 (5,	'Bathroom 3',	'00:17:88:01:02:95:0a:d2-0b'),
 (6,	'Fringe Floor Lamp',	'00:17:88:01:02:96:bb:e9-0b'),
 (7,	'Green Lamp',	'00:17:88:01:02:f4:c9:37-0b'),
-(10,	'Pinball Room Ceiling',	'00:17:88:01:02:f5:29:ea-0b'),
-(11,	'Christmas Tree',	'00:17:88:01:02:96:bf:48-0b'),
+(10,	'Pinball Room Ceiling 1',	'00:17:88:01:02:f5:29:ea-0b'),
+(11,	'Bathroom 1',	'00:17:88:01:02:96:bf:48-0b'),
 (12,	'Basement Room',	'00:17:88:01:02:1e:80:61-0b'),
 (13,	'Counter Left',	'00:17:88:01:02:ad:cf:bb-0b'),
 (14,	'Chandelier 3',	'00:17:88:01:06:c0:7c:64-0b'),
@@ -186,17 +189,17 @@ INSERT INTO `lights` (`id`, `description`, `uniqueid`) VALUES
 (32,	'Teal Lamp',	'00:17:88:01:02:83:1c:3a-0b'),
 (33,	'Basement by Furnace',	'00:17:88:01:02:f0:2d:4f-0b'),
 (34,	'Back Porch',	'00:17:88:01:02:80:43:b2-0b'),
-(35,	'Pinball Room Ceiling',	'00:17:88:01:02:80:1d:4f-0b'),
+(35,	'Pinball Room Ceiling 2',	'00:17:88:01:02:80:1d:4f-0b'),
 (36,	'Bathroom 2',	'00:17:88:01:02:80:2e:df-0b'),
-(37,	'Spare Room Ceiling',	'00:17:88:01:02:56:93:49-0b'),
+(37,	'Spare Room Ceiling 1',	'00:17:88:01:02:56:93:49-0b'),
 (38,	'Counter Right',	'00:17:88:01:02:ad:cf:a7-0b'),
 (39,	'Outdoor String Lights',	'00:17:88:01:08:05:51:6f-0b'),
 (40,	'Front Hallway',	'00:17:88:01:08:14:23:c7-0b'),
-(41,	'Dining Room Light',	'00:17:88:01:06:c2:bd:9b-0b'),
-(42,	'Dining Room Light',	'00:17:88:01:06:c2:d6:b6-0b'),
-(43,	'Dining Room Light',	'00:17:88:01:06:c2:ea:51-0b'),
-(44,	'Spare Room Ceiling',	'00:17:88:01:02:ba:ff:6f-0b'),
-(50,	'Hue ambient light sensor 6',	'00:17:88:01:02:03:ee:fe-02-0400');
+(41,	'Dining Room Light 3',	'00:17:88:01:06:c2:bd:9b-0b'),
+(42,	'Dining Room Light 2',	'00:17:88:01:06:c2:d6:b6-0b'),
+(43,	'Dining Room Light 1',	'00:17:88:01:06:c2:ea:51-0b'),
+(44,	'Spare Room Ceiling 2',	'00:17:88:01:02:ba:ff:6f-0b'),
+(51,	'Noise Machine',	'00:17:88:01:08:60:d1:83-0b');
 
 DROP TABLE IF EXISTS `light_history`;
 CREATE TABLE `light_history` (
@@ -215,4 +218,4 @@ CREATE TABLE `light_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
--- 2021-01-20 00:06:14
+-- 2021-02-23 20:50:40
