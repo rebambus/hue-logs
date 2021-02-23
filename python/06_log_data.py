@@ -70,12 +70,12 @@ while True:
                 bri = 0
             reachable = jData[key]['state']['reachable']
 
-            if state == 0:
-                bri = 0
-
-            if reachable == 0:
-                state = 0
-                bri = 0
+#            if state == 0:
+#                bri = 0
+#
+#            if reachable == 0:
+#                state = 0
+#                bri = 0
 
             args = [uniqueid, description, state, bri,reachable]
             print(args)
