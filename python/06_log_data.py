@@ -43,7 +43,7 @@ while True:
                     type = 'lightlevel'
                     value = jData[key]['state']['lightlevel']
 
-            if type != 'none':
+            if type != 'none' and lastupdated != 'none':
                 args = [uniqueid, description, lastupdated, type, value]
                 print(args)
                 mycursor.callproc('hue_log_sensor_data',args)
