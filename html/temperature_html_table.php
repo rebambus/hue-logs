@@ -1,44 +1,7 @@
 <?php
 require_once('mysqli_connect.php');
 
-$sql = "
-SELECT   sensor.sensor_id,
-         sensor.description,
-         ROUND(log.value, 0) AS temperature,
-         UNIX_TIMESTAMP(log.lastupdated) AS time,
-         ROUND(log_min.value, 0) AS min_temp,
-         ROUND(log_min.value - log.value, 0) AS min_diff,
-         UNIX_TIMESTAMP(log_min.lastupdated) AS min_time,
-         ROUND(log_max.value, 0) AS max_temp,
-         ROUND(log_max.value - log.value, 0) AS max_diff,
-         UNIX_TIMESTAMP(log_max.lastupdated) AS max_time
-FROM     hue_sensor_data AS log
-         JOIN hue_sensors AS sensor
-             ON sensor.sensor_id = log.sensor_id
-         LEFT JOIN hue_sensor_data AS log_min
-             ON log_min.id = (   SELECT   id
-                                 FROM     hue_sensor_data AS h2
-                                 WHERE    h2.sensor_id = log.sensor_id
-                                     AND lastupdated >= timestampadd(DAY, -1, UTC_TIMESTAMP())
-                                 ORDER BY value, id DESC
-                                 LIMIT 1
-             )
-         LEFT JOIN hue_sensor_data log_max
-             ON log_max.id = (   SELECT   id
-                                 FROM     hue_sensor_data AS h2
-                                 WHERE    h2.sensor_id = log.sensor_id
-                                     AND lastupdated >= timestampadd(DAY, -1, UTC_TIMESTAMP())
-                                 ORDER BY value DESC, id DESC
-                                 LIMIT 1
-             )
-WHERE    log.type= 'temperature'
-    AND log.id IN( SELECT MAX(id)FROM hue_sensor_data GROUP BY sensor_id )
-ORDER BY CASE WHEN description LIKE '%porch%'
-                  THEN 1
-              ELSE 2
-         END,
-         sensor.description;
-";
+$sql = "CALL `temperature_table`()";
 
 $result = $conn->query($sql);
 
