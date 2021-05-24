@@ -1,7 +1,7 @@
 <?php
 require_once('mysqli_connect.php');
 
-$sql = "CALL `temperature_table`()";
+$sql = "CALL `temperature_table`();";
 
 $result = $conn->query($sql);
 
