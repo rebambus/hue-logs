@@ -99,3 +99,8 @@ if ($result_chart_temp->num_rows > 0) {
     echo $jsonTable;
 } else {
 }
+
+
+if ($result_chart_temp) {
+    $result_chart_temp->free();
+}
