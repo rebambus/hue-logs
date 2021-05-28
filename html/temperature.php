@@ -27,8 +27,6 @@ error_reporting(E_ALL);
 
 <p><a href="http://192.168.86.172/api/E7aAajMAh3Uz5U39V2rCNuxuBmA3CJZVy31bF7rc">Direct link to Hue API call (local only).</a></p>
 
-<?php include 'time_since_script.php'?>
-
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
 	google.charts.load('current', {'packages': ['corechart']});
