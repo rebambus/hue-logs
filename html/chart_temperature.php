@@ -24,6 +24,10 @@ if (isset($_GET['output'])) {
 // the SQL call!
 $result_chart_temp = $conn->query($sql_chart_temp);
 
+if (!$result_chart_temp) {
+    trigger_error('Invalid query: ' . $conn->error);
+}
+
 if (isset($_GET['output'])) {
     if ($_GET['output'] == 'table') {
         echo '<table>';
