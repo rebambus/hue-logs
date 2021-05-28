@@ -2,27 +2,27 @@
 
 require_once('mysqli_connect.php');
 
-$sql = file_get_contents("chart_temperature.sql");
+$sql_chart_temp = file_get_contents("chart_temperature.sql");
 
 if (!isset($_GET['hours_back'])) {
 	$hours_back = 24;
 } else {
 	$hours_back = $_GET['hours_back'];
 }
-$sql = str_replace("@hours_back", $hours_back, $sql);
+$sql_chart_temp = str_replace("@hours_back", $hours_back, $sql_chart_temp);
 
 // if ?output=sql, return SQL query
 if (isset($_GET['output'])) {
     if ($_GET['output'] == 'sql') {
         echo '<pre>';
-        echo $sql;
+        echo $sql_chart_temp;
         echo '</pre>';
         return;
     }
 }
 
 // the SQL call!
-$result = $conn->query($sql);
+$result = $conn->query($sql_chart_temp);
 
 if (isset($_GET['output'])) {
     if ($_GET['output'] == 'table') {
