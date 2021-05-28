@@ -22,7 +22,7 @@ if (isset($_GET['output'])) {
 }
 
 // the SQL call!
-$result = $conn->query($sql_chart_temp);
+$result_chart_temp = $conn->query($sql_chart_temp);
 
 if (isset($_GET['output'])) {
     if ($_GET['output'] == 'table') {
@@ -38,7 +38,7 @@ if (isset($_GET['output'])) {
         echo '<th>Living Room</th>';
         echo '<th>Upstairs Hallway</th>';
         echo '</tr>';
-        while ($row = $result->fetch_assoc()) {
+        while ($row = $result_chart_temp->fetch_assoc()) {
             echo '<tr>';
             echo '<td>'. $row['lastupdated']. '</td>';
             echo '<td>'. $row['back_porch']. '</td>';
@@ -70,8 +70,8 @@ $table['cols'] = array(
 );
 
 $rows = array();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
+if ($result_chart_temp->num_rows > 0) {
+    while ($row = $result_chart_temp->fetch_assoc()) {
         $temp = array();
 
         $temp[] = array('v' => 'Date(' . 1000*$row['lastupdated'] .')');
