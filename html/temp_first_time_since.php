@@ -13,7 +13,8 @@ FROM     hue_sensor_data AS t
          JOIN hue_sensors AS sensors
              ON sensors.sensor_id = t.sensor_id
 WHERE    type = 'temperature'
-GROUP BY sensor_id, CAST(value AS SIGNED);
+GROUP BY sensor_id, CAST(value AS SIGNED)
+ORDER BY sensor_id, CAST(value AS SIGNED) DESC;
 ";
 
 $result = $conn->query($sql);
