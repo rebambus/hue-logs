@@ -1,6 +1,6 @@
 <?php include 'chart_calendar.php'?>
 
-<div id="calendar_max_div" style="width: 100%; height: 200px;"></div>
+<div id="calendar_max_div" style="width: 100%; height: 400px;"></div>
 
 <p>Links to chart data in
 	<a href="chart_calendar.php?<?php echo http_build_query(array_merge($_GET, array("output"=>null)))?>">JSON</a>,
